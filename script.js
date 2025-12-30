@@ -77,6 +77,16 @@
       external: { value: 5 }
     },
     reconRealityStoreAvg: 987,
+
+    stopBuyingMeta: {
+      "2021 Ford F-150 XLT": { confidence: 86, band: "Moderate Confidence", breakpoint: "Confidence drops below 70% if paid above MMR + $1,250." },
+      "2020 Silverado LTZ": { confidence: 79, band: "Moderate Confidence", breakpoint: "Confidence drops below 65% if projected days-to-sell exceeds 52 days." },
+      "2019 Ram 1500 Big Horn": { confidence: 77, band: "Moderate Confidence", breakpoint: "Confidence drops below 60% if needed price-to-market is >1.5% under comps." },
+      "2020 Explorer Limited": { confidence: 81, band: "Moderate Confidence", breakpoint: "Confidence drops below 65% if recon exceeds $1,800." },
+      "2022 Altima SV": { confidence: 88, band: "Moderate Confidence", breakpoint: "Confidence drops below 70% if competing supply within 50 miles exceeds 28 units." },
+      "2021 Equinox LT": { confidence: 76, band: "Moderate Confidence", breakpoint: "Confidence drops below 60% if days-to-sell exceeds 45 days." },
+      "2018 Tahoe LT": { confidence: 74, band: "Low Confidence", breakpoint: "Confidence drops below 60% if wholesale spread widens beyond $2,500." }
+    },
     details: {
       stop_buying: {
         title: "STOP BUYING",
@@ -85,13 +95,13 @@
       evidence: { window: "365d", n: 204, updated: "Updated today" },
         columns: ["Profile", "Plain-English reason", "Confidence"],
         rows: [
-          ["2021 Ford F-150 XLT", "We keep paying up for the wrong trim mix", "High"],
-          ["2020 Silverado LTZ", "Sits too long → price cuts kill you", "Med"],
-          ["2019 Ram 1500 Big Horn", "Easy to buy, harder to retail here", "Med"],
-          ["2020 Explorer Limited", "Recon surprises show up late", "Med"],
-          ["2022 Altima SV", "Too common → always a price fight", "High"],
-          ["2021 Equinox LT", "Too many days to sell", "Med"],
-          ["2018 Tahoe LT", "Wholesale hit risk if it doesn’t move", "Med"]
+          ["2021 Ford F-150 XLT", "We keep paying up for the wrong trim mix", "86%"],
+          ["2020 Silverado LTZ", "Sits too long → price cuts kill you", "79%"],
+          ["2019 Ram 1500 Big Horn", "Easy to buy, harder to retail here", "77%"],
+          ["2020 Explorer Limited", "Recon surprises show up late", "81%"],
+          ["2022 Altima SV", "Too common → always a price fight", "88%"],
+          ["2021 Equinox LT", "Too many days to sell", "76%"],
+          ["2018 Tahoe LT", "Wholesale hit risk if it doesn’t move", "74%"]
         ]
       },
       capital_risk: {
@@ -365,6 +375,8 @@ if (reconChip) {
       renderTable(viewData.columns, viewData.rows);
     } else if (col === "acquire_now") {
       renderTable(d.columns, d.rows, { rowClickable: true, onRowClick: (profile) => openAcquireModal(profile), profileIndex: 1 });
+    } else if (col === "stop_buying") {
+      renderTable(d.columns, d.rows, { rowClickable: true, onRowClick: (profile) => openStopBuyingModal(profile), profileIndex: 0 });
     } else {
       renderTable(d.columns, d.rows);
     }
@@ -563,6 +575,29 @@ if (reconChip) {
     }
     setModalOpen(true);
   }
+
+
+function openStopBuyingModal(profile){
+    if(!modal) return;
+    const meta = (demo.stopBuyingMeta && demo.stopBuyingMeta[profile]) || { confidence: 75, band: "Moderate Confidence", breakpoint: "Confidence drops below 60% if recon exceeds $1,800." };
+
+    if(modalTitle) modalTitle.textContent = profile;
+    if(modalSub) modalSub.textContent = `STOP BUYING • ${meta.confidence}% Confidence`;
+
+    if(modalWhere) modalWhere.textContent = "Avoid acquiring this profile at current market/recon conditions.";
+    if(modalWhereNote) modalWhereNote.textContent = meta.band;
+
+    if(modalMaxBuy) modalMaxBuy.textContent = "—";
+    // Reuse the 'Next best action' card to show the breakpoint (the only thing you asked to reveal)
+    if(modalAction) modalAction.textContent = meta.breakpoint;
+
+    // Hide action buttons for Stop Buying
+    if(modalActions) modalActions.hidden = true;
+
+    modal.dataset.open = "true";
+    modal.setAttribute("aria-hidden", "false");
+}
+
 
   function highlightBoardForAlignment(alignment) {
     const map = {

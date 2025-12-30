@@ -30,8 +30,8 @@ body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,
 }
 .topbar__left{display:flex;align-items:center;gap:10px}
 
-.brand-mark{height:26px;width:auto;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
 
+.brand-mark{height:26px;width:auto;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
 .brand-word{font-weight:650;letter-spacing:.2px;color:rgba(238,242,255,.92);font-size:13px}
 .topbar__center{color:rgba(238,242,255,.72);font-size:13px;line-height:1.2}
 .topbar__right{justify-self:end}
