@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Outcome AI — Decision Board</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="oa">
+  <div class="app">
+
+    <header class="topbar">
+      <div class="topbar__left">
+        
+        <div class="brand-word">Outcome AI</div>
+      </div>
+
+      <div class="topbar__center">
+        Capital judgment for acquisition decisions — calm, fast, final.
+      </div>
+
+      <div class="topbar__right">
+        <div class="dealer">
+          <div class="dealer__label">Dealer</div>
+          <input class="dealer__input js-dealerName" type="text" value="Demo Dealer" aria-label="Dealer name" />
+        </div>
+      </div>
+    </header>
+    <div class="statusbar">
+      <div class="statusbar__left">Status: <span class="dot dot--ok"></span> Live Demo</div>
+      <div class="statusbar__right">Login: <span class="js-loginStamp">—</span></div>
+    </div>
+
+    <main class="main">
+      <section class="board" aria-label="Decision Board">
+        <div class="board__frame">
+
+          <button class="board-col board-col--success js-board-col" data-col="acquire_now" aria-expanded="false">
+            <div class="board-col__label">ACQUIRE NOW</div>
+            <div class="board-col__value js-acquireNowValue">—</div>
+          </button>
+
+          <button class="board-col board-col--warn js-board-col" data-col="internal_supply" aria-expanded="false">
+            <div class="board-col__label">INTERNAL SUPPLY</div>
+            <div class="board-col__value js-internalSupplyValue">—</div>
+          </button>
+
+          <button class="board-col board-col--warn js-board-col" data-col="external" aria-expanded="false">
+            <div class="board-col__label">EXTERNAL</div>
+            <div class="board-col__value js-externalValue">—</div>
+          </button>
+
+          <button class="board-col board-col--danger js-board-col" data-col="capital_risk" aria-expanded="false">
+            <div class="board-col__label">CAPITAL AT RISK</div>
+            <div class="board-col__value js-capitalRiskValue">—</div>
+            <div class="board-col__micro js-capitalRiskDelta" hidden>
+              <span class="delta delta--down js-capitalRiskArrow">↓</span>
+              <span class="delta__text js-capitalRiskDeltaText">—</span>
+            </div>
+          </button>
+
+          <button class="board-col board-col--danger js-board-col" data-col="stop_buying" aria-expanded="false">
+            <div class="board-col__label">STOP BUYING</div>
+            <div class="board-col__value js-stopBuyingValue">—</div>
+          </button>
+
+        </div>
+
+        <section class="drawer js-drawer" data-open="false" aria-label="Decision Detail">
+          <div class="drawer__header">
+            <div>
+              <div class="drawer__title js-drawerTitle">Select a column</div>
+              <div class="drawer__subtitle js-drawerSubtitle">
+                Click a board column to open the decision list.
+              </div>
+            </div>
+
+            <div class="drawer__right">
+              <div class="chip js-reconChip" hidden title="Based on closed repair orders, not estimates.">
+                Recon Reality (Store Avg)
+                <span class="chip__value js-reconValue">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="drawer__body">
+            <div class="action-strip js-actionStrip" hidden>
+              <button class="btn btn--primary js-actCallCustomer" type="button">Call / Text Customer</button>
+              <button class="btn btn--ghost js-actNotifyAdvisor" type="button">Notify Advisor</button>
+              <button class="btn btn--ghost js-actOpenCRM" type="button">Open CRM Record</button>
+            </div>
+
+            <div class="toggle js-internalToggle" hidden>
+              <button class="toggle__btn is-active js-toggle" data-view="service">Service</button>
+              <button class="toggle__btn js-toggle" data-view="appraisals">Live Appraisals</button>
+              <button class="toggle__btn is-disabled" disabled>Previously Sold</button>
+            </div>
+
+            <div class="table-wrap js-tableWrap">
+              <table class="table">
+                <thead class="js-tableHead">
+                  <tr>
+                    <th>Profile</th>
+                    <th>Reason</th>
+                    <th class="right">Confidence</th>
+                  </tr>
+                </thead>
+                <tbody class="js-tableBody">
+                  <tr>
+                    <td colspan="3" class="muted">
+                      No details yet. Click a Decision Board column above.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </section>
+      </section>
+    </main>
+
+
+    <div class="modal js-modal" data-open="false" aria-hidden="true">
+      <div class="modal__backdrop js-modalClose"></div>
+      <div class="modal__panel" role="dialog" aria-modal="true" aria-label="Vehicle detail">
+        <div class="modal__head">
+          <div>
+            <div class="modal__title js-modalTitle">Vehicle Detail</div>
+            <div class="modal__sub js-modalSub">—</div>
+          </div>
+          <button class="modal__x js-modalClose" aria-label="Close">✕</button>
+        </div>
+        <div class="modal__body">
+          <div class="modal__grid">
+            <div class="card">
+              <div class="card__k">Where to find it</div>
+              <div class="card__v js-modalWhere">—</div>
+              <div class="card__note js-modalWhereNote muted">—</div>
+            </div>
+            <div class="card">
+              <div class="card__k">Risk-adjusted Max Buy</div>
+              <div class="card__v js-modalMaxBuy">—</div>
+              <div class="card__note muted">Based on recon reality + target front gross.</div>
+            </div>
+            <div class="card">
+              <div class="card__k">Next best action</div>
+              <div class="card__v js-modalAction">—</div>
+              <div class="card__note muted">One click to move it forward.</div>
+            </div>
+          </div>
+
+          <div class="modal-actions js-modalActions">
+            <button class="btn btn--primary js-modalCall" type="button">Call / Text</button>
+            <button class="btn btn--ghost js-modalAdvisor" type="button">Notify Advisor</button>
+            <button class="btn btn--ghost js-modalOffer" type="button">Set Buy Offer</button>
+          </div>
+
+          <div class="modal__tableWrap">
+            <div class="section-title" style="margin-top:14px;">Matches inside your store</div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Vehicle</th>
+                  <th>Source</th>
+                  <th>Customer</th>
+                  <th class="right">When</th>
+                </tr>
+              </thead>
+              <tbody class="js-modalMatches">
+                <tr><td colspan="4" class="muted">No internal matches.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    <aside class="dock" data-open="false">
+      <button class="dock__tab js-dockToggle" aria-label="Open Appraisal Assist">
+        <span class="dock__tabText">Appraisal Assist</span>
+      </button>
+
+      <div class="dock__panel" role="region" aria-label="Appraisal Assist Panel">
+        <div class="dock__header">
+          <div class="dock__title">Appraisal Assist</div>
+          <button class="dock__close js-dockClose" aria-label="Close">✕</button>
+        </div>
+
+        <div class="dock__body">
+          <label class="field">
+            <span class="field__label">VIN</span>
+            <input class="field__input js-vinInput" maxlength="17" placeholder="Paste VIN (17 characters)" />
+          </label>
+
+          <div class="status js-vinStatus">Paste a VIN to start.</div>
+          <div class="dock-actions">
+            <button class="btn btn--ghost js-clearVin" type="button">Clear</button>
+          </div>
+
+          <div class="align js-align" hidden>
+            <div class="align__label">Aligns with</div>
+            <div class="align__value js-alignValue">—</div>
+          </div>
+
+          <div class="trim js-trim" hidden>
+            <div class="trim__label">Select Trim</div>
+            <select class="trim__select js-trimSelect"></select>
+            <div class="trim__note muted">
+              Choose the exact trim to preserve value sensitivity (e.g., Tremor vs non-Tremor).
+            </div>
+          </div>
+
+          <div class="section-title">Deal Math</div>
+
+          <div class="deal-math">
+            <div class="kv">
+              <div class="kv__k">Expected Retail</div>
+              <div class="kv__v js-retail">—</div>
+            </div>
+            <div class="kv">
+              <div class="kv__k">Recon Estimate</div>
+              <div class="kv__v js-reconEst">—</div>
+            </div>
+            <div class="kv">
+              <div class="kv__k">Target Front Gross</div>
+              <div class="kv__v js-targetGross">—</div>
+            </div>
+            <div class="kv">
+              <div class="kv__k">Pack / Fees</div>
+              <div class="kv__v js-pack">—</div>
+            </div>
+            <div class="kv kv--strong">
+              <div class="kv__k">Risk‑Adjusted Max Buy</div>
+              <div class="kv__v js-maxBuy">—</div>
+            </div>
+          </div>
+
+          <label class="field" style="margin-top:12px;">
+            <span class="field__label">Proposed ACV</span>
+            <input class="field__input js-acvInput" inputmode="decimal" placeholder="Enter your ACV offer (e.g., 52000)" />
+          </label>
+
+          <div class="result js-profitWrap" hidden>
+            <div class="result__row">
+              <div class="result__k">Profit Potential</div>
+              <div class="result__v js-profit">—</div>
+            </div>
+            <div class="result__row">
+              <div class="result__k">Status</div>
+              <div class="result__v js-statusPill"><span class="pill pill--neutral">—</span></div>
+            </div>
+          </div>
+
+          <div class="signals">
+            <div class="signal">
+              <div class="signal__k">Outcome Confidence</div>
+              <div class="signal__v js-signalConfidence">—</div>
+            </div>
+            <div class="signal">
+              <div class="signal__k">Capital Friction</div>
+              <div class="signal__v js-signalFriction">—</div>
+            </div>
+            <div class="signal">
+              <div class="signal__k">Trim Sensitivity</div>
+              <div class="signal__v js-signalElasticity">—</div>
+            </div>
+          </div>
+
+          <div class="dock__hint muted">
+            Tip: Appraisal Assist is designed to be used during the appraisal — not after.
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
