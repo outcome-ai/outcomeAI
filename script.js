@@ -233,7 +233,40 @@ function confidenceModifier(conf){
       targetGross: 3500,
       pack: 800
       }
-    }
+,
+      "1FTFW1E50MFA12345": {
+        decoded: { year: 2021, make: "Ford", model: "F-150", trim: "XLT" },
+        trimOptions: ["F-150 XLT", "F-150 XLT Sport", "F-150 Lariat", "F-150 Tremor"],
+        signals: { confidence: "High", friction: "Low", elasticity: "High", whyConfidence: "Strong retail velocity with consistent outcomes at this store.", whyFriction: "Turns quickly with minimal recon variance.", whyTrim: "Small option changes materially impact buyer demand." },
+        alignment: "ACQUIRE NOW",
+        insights: {
+          decision: "High-liquidity profile. Low recon volatility at this store when mileage is under ~55k.",
+          maxBuy: "Buying above Max Buy materially increases downside risk.",
+          profit: "Best outcomes occur when days-to-sale stays under ~24 days. Price-to-market discipline required."
+        },
+        evidence: { window: "180d", n: 18, updated: "Updated today", notes: "Demo stub for end-to-end appraisal flow." },
+        retail: 45995,
+        recon: 1600,
+        targetGross: 3000,
+        pack: 800
+      },
+      "1FM5K8FW2LGA54321": {
+        decoded: { year: 2020, make: "Ford", model: "Explorer", trim: "Limited" },
+        trimOptions: ["Explorer Limited", "Explorer XLT", "Explorer ST", "Explorer Platinum"],
+        signals: { confidence: "Moderate", friction: "High", elasticity: "Medium", whyConfidence: "Outcomes depend on recon and pricing discipline.", whyFriction: "Extended holding periods reduce capital efficiency.", whyTrim: "Small option changes materially impact buyer demand." },
+        alignment: "STOP BUYING",
+        insights: {
+          decision: "Recon variance and market compression increase beyond ~35 days. Avoid repeating this profile at current conditions.",
+          maxBuy: "Confidence drops below authorization threshold if recon exceeds $1,800.",
+          profit: "This profile erodes gross quickly when aged; prioritize faster-turn profiles instead."
+        },
+        evidence: { window: "180d", n: 12, updated: "Updated today", notes: "Demo stub for discipline / risk showcase." },
+        retail: 34995,
+        recon: 1800,
+        targetGross: 2500,
+        pack: 800
+      }
+}
   };
 
 
@@ -451,8 +484,11 @@ if (reconChip) {
   const trimSelect = $(".js-trimSelect");
 
   const sigConfidence = $(".js-signalConfidence");
+  const sigConfidenceWhy = $(".js-signalConfidenceWhy");
   const sigFriction = $(".js-signalFriction");
+  const sigFrictionWhy = $(".js-signalFrictionWhy");
   const sigElasticity = $(".js-signalElasticity");
+  const sigElasticityWhy = $(".js-signalElasticityWhy");
 
   const retailEl = $(".js-retail");
   const reconEl = $(".js-reconEst");
@@ -471,6 +507,10 @@ if (reconChip) {
     if (sigConfidence) sigConfidence.textContent = s?.confidence || "—";
     if (sigFriction) sigFriction.textContent = s?.friction || "—";
     if (sigElasticity) sigElasticity.textContent = s?.elasticity || "—";
+
+    if (sigConfidenceWhy) sigConfidenceWhy.textContent = s?.whyConfidence || "";
+    if (sigFrictionWhy) sigFrictionWhy.textContent = s?.whyFriction || "";
+    if (sigElasticityWhy) sigElasticityWhy.textContent = s?.whyTrim || "";
   }
 
   function setAlignment(text) {
