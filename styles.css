@@ -450,3 +450,21 @@ body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,
   opacity:.7;
   line-height:1.35;
 }
+
+/* Immediate Action Required + Highlights */
+.modal-actions__hdr{
+  width:100%;
+  display:block;
+  margin: 2px 0 6px;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  opacity:.85;
+}
+.btn--highlight{
+  outline: 2px solid rgba(255,255,255,.22);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.25) inset;
+  filter: brightness(1.08);
+}

@@ -565,6 +565,13 @@ if (reconChip) {
   const modalCall = $(".js-modalCall");
   const modalAdvisor = $(".js-modalAdvisor");
   const modalOffer = $(".js-modalOffer");
+
+  function setActionHighlights({call=false, advisor=false, crm=false} = {}){
+    if(modalCall) modalCall.classList.toggle("btn--highlight", !!call);
+    if(modalAdvisor) modalAdvisor.classList.toggle("btn--highlight", !!advisor);
+    if(modalOffer) modalOffer.classList.toggle("btn--highlight", !!crm);
+  }
+
   const modalActions = $(".js-modalActions");
   let modalContext = { vehicle: null, customer: null, when: null, where: null };
   modalCall?.addEventListener('click', ()=>toast(`Outcome action: Call/Text ${modalContext.customer || 'customer'} (stub)`));
@@ -635,7 +642,19 @@ if (reconChip) {
     if(modalAction) modalAction.textContent = matches.length ? "Call / Text the best match now." : "Source a match inside Max Buy.";
     if(modalActions) modalActions.hidden = maxBuy ? false : true;
 
-    modalContext = { vehicle: profile, customer: matches[0]?.customer || null, when: matches[0]?.when || null, where: matches[0]?.where || null };
+    modalContext = { vehicle: profile, customer: matches[0]?.customer || null, when: matches[0]?.when || null, where: matches[0]?.where || null , handoff: true};
+
+    // Immediate Action highlights (0, 1, or multiple)
+    setActionHighlights({call:false, advisor:false, crm:false});
+    if(modalActions && !modalActions.hidden){
+      const hasCustomer = !!modalContext?.customer;
+      const where = (modalContext?.where || "").toLowerCase();
+      const isService = where.includes("service");
+      const call = hasCustomer;
+      const advisor = hasCustomer && isService;
+      const crm = hasCustomer && (conf < 90 || !!modalContext?.handoff);
+      setActionHighlights({call, advisor, crm});
+    }
 
     if(modalMatches){
       if(!matches.length){

@@ -85,11 +85,7 @@
           </div>
 
           <div class="drawer__body">
-            <div class="action-strip js-actionStrip" hidden>
-              <button class="btn btn--primary js-actCallCustomer" type="button">Call / Text Customer</button>
-              <button class="btn btn--ghost js-actNotifyAdvisor" type="button">Notify Advisor</button>
-              <button class="btn btn--ghost js-actOpenCRM" type="button">Open CRM Record</button>
-            </div>
+            
 
             <div class="toggle js-internalToggle" hidden>
               <button class="toggle__btn is-active js-toggle" data-view="service">Service</button>
@@ -152,9 +148,10 @@
           </div>
 
           <div class="modal-actions js-modalActions">
-            <button class="btn btn--primary js-modalCall" type="button">Call / Text</button>
+            <div class="modal-actions__hdr">Immediate Action Required</div>
+            <button class="btn btn--primary js-modalCall" type="button">Call / Text Customer</button>
             <button class="btn btn--ghost js-modalAdvisor" type="button">Notify Advisor</button>
-            <button class="btn btn--ghost js-modalOffer" type="button">Set Buy Offer</button>
+            <button class="btn btn--ghost js-modalOffer" type="button">Open CRM Record</button>
           </div>
 
           <div class="modal__tableWrap">
