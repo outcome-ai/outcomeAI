@@ -1,3 +1,11 @@
+
+
+function confidenceModifier(conf){
+  if(conf >= 90) return 1.00;
+  if(conf >= 80) return 0.98;
+  if(conf >= 70) return 0.95;
+  return null; // escalation required
+}
 (function () {
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -198,6 +206,16 @@
         { where: "Appraisal", vehicle: "2021 Tahoe RST • VIN …7721", customer: "J. Carter", when: "Active" }
       ]
     },
+    acquireMath: {
+      "2022 F-250 XLT Tremor (Gas)": { retail: 67995, recon: 1400, targetGross: 3500, pack: 900, confidence: 92 },
+      "2021 F-150 XLT 302A": { retail: 44995, recon: 1200, targetGross: 3000, pack: 900, confidence: 88 },
+      "2022 Expedition XLT": { retail: 52995, recon: 1600, targetGross: 3200, pack: 900, confidence: 84 },
+      "2021 Tahoe RST": { retail: 58995, recon: 2100, targetGross: 3500, pack: 900, confidence: 86 },
+      "2022 4Runner SR5": { retail: 38995, recon: 900, targetGross: 3000, pack: 900, confidence: 90 },
+      "2021 Sierra SLT": { retail: 45995, recon: 1700, targetGross: 3100, pack: 900, confidence: 80 },
+      "2020 Wrangler Rubicon": { retail: 41995, recon: 1300, targetGross: 2900, pack: 900, confidence: 78 }
+    },
+
     vinStub: {
       "1FT8W2BN9RED53195": {
         decoded: { year: 2024, make: "Ford", model: "F-250", trim: null },
@@ -486,6 +504,7 @@ if (reconChip) {
   const modalWhere = $(".js-modalWhere");
   const modalWhereNote = $(".js-modalWhereNote");
   const modalMaxBuy = $(".js-modalMaxBuy");
+  const modalMaxBuyNote = $(".js-modalMaxBuyNote");
   const modalAction = $(".js-modalAction");
   const modalMatches = $(".js-modalMatches");
 
@@ -544,24 +563,38 @@ if (reconChip) {
 
   function openAcquireModal(profile){
     if(!modal) return;
+
+    const math = (demo.acquireMath && demo.acquireMath[profile]) ? demo.acquireMath[profile] : null;
+    const conf = math?.confidence ?? 85;
+    const band = conf >= 90 ? "High Confidence" : conf >= 75 ? "Moderate Confidence" : "Low Confidence";
+
     if(modalTitle) modalTitle.textContent = profile;
-    if(modalSub) modalSub.textContent = 'Click a match to act fast (stub)';
+    if(modalSub) modalSub.textContent = `${band} • ${conf}% Confidence`;
 
     const matches = demo.acquireMatches[profile] || [];
     const whereSummary = matches.length ? Array.from(new Set(matches.map(m=>m.where))).join(' • ') : 'No internal matches';
     if(modalWhere) modalWhere.textContent = whereSummary;
-    if(modalWhereNote) modalWhereNote.textContent = matches.length ? 'These are inside your store right now.' : 'Use External lane if needed.';
+    if(modalWhereNote) modalWhereNote.textContent = matches.length
+      ? 'Matches are inside your store right now.'
+      : 'Use External lane if needed.';
 
-    if(modalMaxBuy){
-      if(currentMath){
-        const maxBuy = currentMath.retail - currentMath.recon - currentMath.targetGross - currentMath.pack;
-        modalMaxBuy.textContent = fmtMoney(maxBuy);
-      } else {
-        modalMaxBuy.textContent = 'Run Appraisal Assist to set';
-      }
+    let maxBuy = null;
+    if(math){
+      const baseMaxBuy = math.retail - math.recon - math.targetGross - math.pack;
+      const mod = confidenceModifier(conf);
+      maxBuy = mod ? Math.floor(baseMaxBuy * mod) : null;
     }
-    if(modalAction) modalAction.textContent = matches.length ? 'Call/Text matched customer' : 'Source within max buy';
-    if(modalActions) modalActions.hidden = false;
+
+    if(modalMaxBuy) modalMaxBuy.textContent = maxBuy ? fmtMoney(maxBuy) : "—";
+    if(modalMaxBuyNote){
+      modalMaxBuyNote.textContent = maxBuy
+        ? "Buying above this price materially increases downside risk."
+        : "Confidence below authorization threshold. Escalation required.";
+    }
+
+    if(modalAction) modalAction.textContent = matches.length ? "Call / Text the best match now." : "Source a match inside Max Buy.";
+    if(modalActions) modalActions.hidden = maxBuy ? false : true;
+
     modalContext = { vehicle: profile, customer: matches[0]?.customer || null, when: matches[0]?.when || null, where: matches[0]?.where || null };
 
     if(modalMatches){
@@ -573,8 +606,10 @@ if (reconChip) {
         }).join('');
       }
     }
-    setModalOpen(true);
-  }
+
+    modal.dataset.open = "true";
+    modal.setAttribute("aria-hidden", "false");
+}
 
 
 function openStopBuyingModal(profile){
