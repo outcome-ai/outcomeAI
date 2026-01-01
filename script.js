@@ -503,10 +503,32 @@ if (reconChip) {
 
   let currentMath = null;
 
-  function setSignals(s) {
-    if (sigConfidence) sigConfidence.textContent = s?.confidence || "—";
-    if (sigFriction) sigFriction.textContent = s?.friction || "—";
-    if (sigElasticity) sigElasticity.textContent = s?.elasticity || "—";
+  
+function setGauge(el, level, kind){
+  if(!el) return;
+  const gauge = el.querySelector(".gauge");
+  const marker = el.querySelector(".gauge__marker");
+  if(!gauge || !marker){
+    el.textContent = level || "—";
+    return;
+  }
+  const v = (level || "—").toString().trim().toUpperCase();
+  let pos = 50;
+  if(v === "LOW") pos = 20;
+  else if(v === "MED" || v === "MEDIUM" || v === "MODERATE") pos = 50;
+  else if(v === "HIGH") pos = 80;
+
+  gauge.classList.toggle("gauge--risk", kind === "risk");
+  marker.style.left = pos + "%";
+
+  const sr = el.querySelector(".sr-only");
+  if(sr) sr.textContent = (level || "—");
+}
+
+function setSignals(s) {
+    if (sigConfidence) setGauge(sigConfidence, s?.confidence || "—", "positive");
+    if (sigFriction) setGauge(sigFriction, s?.friction || "—", "risk");
+    if (sigElasticity) setGauge(sigElasticity, s?.elasticity || "—", "risk");
 
     if (sigConfidenceWhy) sigConfidenceWhy.textContent = s?.whyConfidence || "";
     if (sigFrictionWhy) sigFrictionWhy.textContent = s?.whyFriction || "";
