@@ -33,23 +33,32 @@
     </div>
 
     <main class="main">
-      <section class="board" aria-label="Decision Board">
-        <div class="board__frame">
+  <section class="board" aria-label="Decision Board">
+    <div class="board__grid board__grid--3">
+      <div class="board__nav" aria-label="Decision Tiles">
+        <div class="board__frame board__frame--vertical">
+
 
           <button class="board-col board-col--success js-board-col" data-col="acquire_now" aria-expanded="false">
             <div class="board-col__label">ACQUIRE NOW</div>
             <div class="board-col__value js-acquireNowValue">—</div>
-          </button>
+          
+            <div class="board-col__coi" id="coiMicro-acquire_now" aria-label="Cost of inaction micro">⏱ <span class="board-col__coiVal">—</span></div>
+</button>
 
           <button class="board-col board-col--warn js-board-col" data-col="internal_supply" aria-expanded="false">
             <div class="board-col__label">INTERNAL SUPPLY</div>
             <div class="board-col__value js-internalSupplyValue">—</div>
-          </button>
+          
+            <div class="board-col__coi" id="coiMicro-internal_supply" aria-label="Cost of inaction micro">⏱ <span class="board-col__coiVal">—</span></div>
+</button>
 
           <button class="board-col board-col--warn js-board-col" data-col="external" aria-expanded="false">
             <div class="board-col__label">EXTERNAL</div>
             <div class="board-col__value js-externalValue">—</div>
-          </button>
+          
+            <div class="board-col__coi" id="coiMicro-external" aria-label="Cost of inaction micro">⏱ <span class="board-col__coiVal">—</span></div>
+</button>
 
           <button class="board-col board-col--danger js-board-col" data-col="capital_risk" aria-expanded="false">
             <div class="board-col__label">CAPITAL AT RISK</div>
@@ -58,64 +67,253 @@
               <span class="delta delta--down js-capitalRiskArrow">↓</span>
               <span class="delta__text js-capitalRiskDeltaText">—</span>
             </div>
-          </button>
+          
+            <div class="board-col__coi" id="coiMicro-capital_risk" aria-label="Cost of inaction micro">⏱ <span class="board-col__coiVal">—</span></div>
+</button>
 
           <button class="board-col board-col--danger js-board-col" data-col="stop_buying" aria-expanded="false">
             <div class="board-col__label">STOP BUYING</div>
             <div class="board-col__value js-stopBuyingValue">—</div>
-          </button>
+          
+            <div class="board-col__coi" id="coiMicro-stop_buying" aria-label="Cost of inaction micro">⏱ <span class="board-col__coiVal">—</span></div>
+</button>
+
 
         </div>
+      </div>
 
-        <section class="drawer js-drawer" data-open="false" aria-label="Decision Detail">
-          <div class="drawer__header">
-            <div>
-              <div class="drawer__title js-drawerTitle">Select a column</div>
-              <div class="drawer__subtitle js-drawerSubtitle">
-                Click a board column to open the decision list.
+      <div class="board__center" aria-label="Selected Tile Details">
+<section class="drawer js-drawer" data-open="true" aria-label="Decision Detail">
+  <div class="drawer__header">
+    <div class="drawer__headLeft">
+      <div class="drawer__title js-drawerTitle">Select a column</div>
+      <div class="drawer__subtitle js-drawerSubtitle">Click a decision tile to load the priority list.</div>
+    </div>
+
+    <div class="drawer__headRight">
+      <div class="chip js-reconChip" hidden title="Based on close-rate &amp; gross realism (store average).">
+        Recon Reality <span class="chip__value js-reconValue">—</span>
+      </div>
+      <button class="drawer__collapse js-drawerCollapse" type="button" aria-label="Collapse details">–</button>
+    </div>
+  </div>
+
+  <div class="drawer__body">
+    <div class="toggle js-internalToggle" hidden>
+      <button class="toggle__btn is-active js-toggle" data-view="service">Service</button>
+      <button class="toggle__btn js-toggle" data-view="appraisals">Live Appraisals</button>
+      <button class="toggle__btn is-disabled" disabled>Previously Sold</button>
+    </div>
+
+    <div class="table-wrap js-tableWrap">
+      <table class="table">
+        <thead class="js-tableHead">
+          <tr>
+            <th>Profile</th>
+            <th>Reason</th>
+            <th class="right">Confidence</th>
+          </tr>
+        </thead>
+        <tbody class="js-tableBody">
+          <tr>
+            <td colspan="3" class="muted">No details yet. Click a Decision tile on the left.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+      </div>
+
+      <div class="board__side" aria-label="Pressure Column">
+<section class="cie cie--compact" aria-label="Cost of Inaction">
+              <div class="cie__head">
+                <div>
+                  <h2 class="cie__title">Cost of Inaction</h2>
+                  <p class="cie__sub">Preventable loss from surfaced opportunities</p>
+                </div>
+                <div class="cie__pill" title="Records are immutable">Immutable Record</div>
+              </div>
+
+              <div class="cie__summary">
+                <div class="cie__card">
+                  <div class="cie__label">Preventable Loss (30 Days)</div>
+                  <div class="cie__value" id="cieLoss">—</div>
+                  <div class="cie__meta" id="cieLossDelta">—</div>
+                </div>
+                <div class="cie__card">
+                  <div class="cie__label">Loss Avoided</div>
+                  <div class="cie__value" id="cieAvoided">—</div>
+                  <div class="cie__meta">Captured</div>
+                </div>
+                <div class="cie__card">
+                  <div class="cie__label">Escalating Items</div>
+                  <div class="cie__value" id="cieEscCount">—</div>
+                  <div class="cie__meta">Threshold soon</div>
+                </div>
+                <div class="cie__card">
+                  <div class="cie__label">Next Escalation</div>
+                  <div class="cie__value cie__mono" id="cieNextEsc">—</div>
+                  <div class="cie__meta">Highest impact</div>
+                </div>
+              </div>
+
+              <div class="cie__exposure">
+                <div class="cie__exposureTop">
+                  <div class="cie__label">Inaction Exposure (Rolling 30 Days)</div>
+                  <div class="cie__meta" id="cieExposureNote">Exposure rising from unaddressed items</div>
+                </div>
+                <div class="cie__barWrap" role="img" aria-label="Inaction exposure bar">
+                  <div class="cie__barMarkers">
+                    <span>Monitor</span>
+                    <span>At Risk</span>
+                    <span>Escalating</span>
+                  </div>
+                  <div class="cie__bar">
+                    <div class="cie__barCover" id="cieBarFill" style="width: 0%"></div>
+                    <div class="cie__barKnob" id="cieBarKnob" style="left: 0%"></div>
+                    <div class="cie__tick" style="left: 33%"></div>
+                    <div class="cie__tick" style="left: 66%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cie__footer cie__footer--compact">
+                <button class="cie__btnSecondary" id="openLedgerBtn" type="button">View Ignored Opportunity Ledger →</button>
+                <div class="cie__footNote">Exposure and escalation are threshold-based.</div>
+              </div>
+            </section>
+<section class="approachPanel" aria-label="Approaching Escalation">
+              <div class="approachPanel__head">
+                <h3 class="approachPanel__title" data-tip="Items that will escalate if nobody touches them. Escalation is visibility—not blame.">Approaching Escalation</h3>
+                <div class="approachPanel__meta">Items will escalate based on time/value thresholds.</div>
+              </div>
+              <div class="approachPanel__rows" id="cieRowsRight"></div>
+            </section>
+
+            <section class="coiDash" aria-label="Cost of Inaction Dashboard Extensions">
+              <div class="coiDash__module" id="attentionFlow">
+                <div class="coiDash__head">
+                  <h3 class="coiDash__title">Attention Flow</h3>
+                  <div class="coiDash__meta">Where delay is becoming expensive</div>
+                </div>
+                <div class="coiDash__rows" id="attentionFlowList" aria-label="Attention Flow Items"></div>
+              </div>
+
+              <div class="coiDash__module" id="agedToday">
+                <div class="coiDash__head">
+                  <h3 class="coiDash__title">Aged Today</h3>
+                  <div class="coiDash__meta">Opportunities that crossed a threshold today</div>
+                </div>
+                <div class="coiDash__rows" id="agedTodayList" aria-label="Aged Today Items"></div>
+              </div>
+
+              <div class="coiDash__module" id="resolvedToday">
+                <div class="coiDash__head">
+                  <h3 class="coiDash__title">Resolved Today</h3>
+                  <div class="coiDash__meta">What didn’t slip</div>
+                </div>
+                <div class="coiDash__rows" id="resolvedTodayList" aria-label="Resolved Today Items"></div>
+              </div>
+
+              <div class="coiDash__belief" title="Outcome AI principle">Silence is not neutral.</div>
+            </section>
+
+
+      </div>
+    </div>
+  </section>
+
+  <div class="ledger" id="ledger" aria-hidden="true">
+          <div class="ledger__backdrop" id="ledgerBackdrop"></div>
+          <aside class="ledger__panel" role="dialog" aria-modal="true" aria-label="Ignored Opportunity Ledger">
+            <div class="ledger__head">
+              <div>
+                <h2 class="ledger__title">Ignored Opportunity Ledger</h2>
+                <p class="ledger__sub">Immutable record of surfaced opportunities that expired or escalated without action</p>
+              </div>
+              <button class="ledger__close" id="closeLedgerBtn" aria-label="Close ledger">✕</button>
+            </div>
+
+            <div class="ledger__filters">
+              <select class="ledger__select" id="ledgerRange">
+                <option value="30">Last 30 days</option>
+                <option value="7">Last 7 days</option>
+                <option value="60">Last 60 days</option>
+              </select>
+              <select class="ledger__select" id="ledgerType">
+                <option value="all">All Opportunity Types</option>
+                <option value="Acquire Now">Acquire Now</option>
+                <option value="Internal Supply">Internal Supply</option>
+                <option value="Capital at Risk">Capital at Risk</option>
+                <option value="Stop Buying">Stop Buying</option>
+              </select>
+              <select class="ledger__select" id="ledgerDept">
+                <option value="all">All Departments</option>
+                <option value="Used">Used</option>
+                <option value="New">New</option>
+                <option value="Service">Service</option>
+              </select>
+              <select class="ledger__select" id="ledgerStatus">
+                <option value="all">All Statuses</option>
+                <option value="Expired">Expired</option>
+                <option value="Escalated">Escalated</option>
+                <option value="Dismissed">Dismissed</option>
+              </select>
+              <div class="ledger__immutable">Records cannot be edited or removed</div>
+            </div>
+
+            <div class="ledger__kpis">
+              <div class="ledger__kpi">
+                <div class="ledger__kLabel">Preventable Loss</div>
+                <div class="ledger__kVal" id="ledgerLoss">—</div>
+              </div>
+              <div class="ledger__kpi">
+                <div class="ledger__kLabel">% Escalated Before Expiry</div>
+                <div class="ledger__kVal" id="ledgerEscPct">—</div>
+              </div>
+              <div class="ledger__kpi">
+                <div class="ledger__kLabel">Avg Days Unaddressed</div>
+                <div class="ledger__kVal" id="ledgerAvgDays">—</div>
+              </div>
+              <div class="ledger__kpi">
+                <div class="ledger__kLabel">Most Common Category</div>
+                <div class="ledger__kVal" id="ledgerTopCat">—</div>
               </div>
             </div>
 
-            <div class="drawer__right">
-              <div class="chip js-reconChip" hidden title="Based on closed repair orders, not estimates.">
-                Recon Reality (Store Avg)
-                <span class="chip__value js-reconValue">—</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="drawer__body">
-            
-
-            <div class="toggle js-internalToggle" hidden>
-              <button class="toggle__btn is-active js-toggle" data-view="service">Service</button>
-              <button class="toggle__btn js-toggle" data-view="appraisals">Live Appraisals</button>
-              <button class="toggle__btn is-disabled" disabled>Previously Sold</button>
-            </div>
-
-            <div class="table-wrap js-tableWrap">
-              <table class="table">
-                <thead class="js-tableHead">
+            <div class="ledger__tableWrap">
+              <table class="ledger__table">
+                <thead>
                   <tr>
-                    <th>Profile</th>
-                    <th>Reason</th>
-                    <th class="right">Confidence</th>
+                    <th>Date Surfaced</th>
+                    <th>Opportunity Type</th>
+                    <th>Dept</th>
+                    <th>Owner</th>
+                    <th>Estimated Gross (Range)</th>
+                    <th>Days Unaddressed</th>
+                    <th>Status</th>
+                    <th>Recorded Preventable Loss</th>
+                    <th>Escalated</th>
+                    <th></th>
                   </tr>
                 </thead>
-                <tbody class="js-tableBody">
-                  <tr>
-                    <td colspan="3" class="muted">
-                      No details yet. Click a Decision Board column above.
-                    </td>
-                  </tr>
-                </tbody>
+                <tbody id="ledgerBody"></tbody>
               </table>
             </div>
 
-          </div>
-        </section>
-      </section>
-    </main>
+            <div class="ledgerDetail" id="ledgerDetail" aria-hidden="true">
+              <div class="ledgerDetail__head">
+                <div class="ledgerDetail__title">Opportunity Details</div>
+                <button class="ledgerDetail__close" id="closeDetailBtn" aria-label="Close details">✕</button>
+              </div>
+              <div class="ledgerDetail__content" id="ledgerDetailContent"></div>
+            </div>
+          </aside>
+        </div>
+</main>
+
 
 
     <div class="modal js-modal" data-open="false" aria-hidden="true">
@@ -155,7 +353,7 @@
           </div>
 
           <div class="modal__tableWrap">
-            <div class="section-title" style="margin-top:14px;">Matches inside your store</div>
+            <div class="section-title js-modalMatchesTitle" style="margin-top:14px;">Matches inside your store</div>
             <table class="table">
               <thead>
                 <tr>

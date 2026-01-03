@@ -68,7 +68,7 @@ function confidenceModifier(conf){
     if(!wrap){
       wrap = document.createElement("div");
       wrap.className = "oa-insight";
-      wrap.innerHTML = `<div class="oa-insight__text"></div><button class="oa-why" type="button">Why?</button>`;
+      wrap.innerHTML = `<div class="oa-insight__k">Store Insight</div><div class="oa-insight__text"></div><button class="oa-why" type="button">Why?</button>`;
       container.appendChild(wrap);
     }
     const textEl = wrap.querySelector(".oa-insight__text");
@@ -95,7 +95,20 @@ function confidenceModifier(conf){
       "2021 Equinox LT": { confidence: 76, band: "Moderate Confidence", breakpoint: "Confidence drops below 60% if days-to-sell exceeds 45 days." },
       "2018 Tahoe LT": { confidence: 74, band: "Low Confidence", breakpoint: "Confidence drops below 60% if wholesale spread widens beyond $2,500." }
     },
-    details: {
+    
+    stopBuyingDrivers: {
+      "2021 Ford F-150 XLT": [
+        ["2021 F-150 XLT — Stock #U1842", "On Hand", "High days supply", "52d"],
+        ["2020 F-150 XLT — Stock #U1739", "On Hand", "Price-to-market lagging", "47d"]
+      ],
+      "2020 Silverado LTZ": [
+        ["2020 Silverado LTZ — Stock #U1620", "On Hand", "Recon trending high", "49d"]
+      ],
+      "__default__": [
+        ["Similar unit — Stock #U1508", "On Hand", "Sits too long here", "45d"]
+      ]
+    },
+details: {
       stop_buying: {
         title: "STOP BUYING",
         subtitle: "Vehicles that consistently lose money here",
@@ -119,13 +132,13 @@ function confidenceModifier(conf){
       evidence: { window: "90d", n: 118, updated: "Updated today" },
         columns: ["Vehicle", "Days in Stock", "Revenue at Risk"],
         rows: [
-          ["2022 F-150 Lariat", "41", "$2,150"],
-          ["2021 Yukon SLT", "53", "$4,800"],
-          ["2020 Camry XSE", "36", "$1,250"],
-          ["2021 Escape SEL", "44", "$1,100"],
-          ["2022 Explorer ST", "58", "$6,300"],
-          ["2020 Accord Sport", "39", "$1,600"],
-          ["2021 Wrangler Sahara", "47", "$3,250"]
+          ["2022 F-150 Lariat — Stock #U2214", "41", "$2,150"],
+          ["2021 Yukon SLT — Stock #U1988", "53", "$4,800"],
+          ["2020 Camry XSE — Stock #U1762", "36", "$1,250"],
+          ["2021 Escape SEL — Stock #U2051", "44", "$1,100"],
+          ["2022 Explorer ST — Stock #U1907", "58", "$6,300"],
+          ["2020 Accord Sport — Stock #U1710", "39", "$1,600"],
+          ["2021 Wrangler Sahara — Stock #U1879", "47", "$3,250"]
         ]
       },
       acquire_now: {
@@ -183,11 +196,11 @@ function confidenceModifier(conf){
       evidence: { window: "90d", n: 18, updated: "Updated today" },
         columns: ["Profile", "Source", "Why this source"],
         rows: [
-          ["2022 4Runner SR5", "Partner dealer network", "Fastest path to a clean unit"],
-          ["2021 Tahoe RST", "Auction (select)", "Only if within max buy"],
-          ["2022 F-250 XLT Tremor", "Buy-bid", "Trim premium holds"],
-          ["2021 F-150 XLT 302A", "Direct purchase", "Repeatable gross pattern"],
-          ["2020 Wrangler Rubicon", "Partner dealer network", "Trim premium holds"]
+          ["2022 4Runner SR5", "<span class='src-badge' data-tip='Partner inventory via opt-in feed.'>Partner Dealer Network</span>", "Fastest path to a clean unit"],
+          ["2021 Tahoe RST", "<span class='src-badge' data-tip='Upcoming auction listing (feed).'>Auction Feed</span>", "Only if within max buy"],
+          ["2022 F-250 XLT Tremor", "<span class='src-badge' data-tip='Dealer-to-dealer listing (Buy Bid network).'>Buy Bid Network</span>", "Trim premium holds"],
+          ["2021 F-150 XLT 302A", "<span class='src-badge' data-tip='Direct purchase source you configured.'>Direct Purchase</span>", "Repeatable gross pattern"],
+          ["2020 Wrangler Rubicon", "<span class='src-badge' data-tip='Partner inventory via opt-in feed.'>Partner Dealer Network</span>", "Trim premium holds"],
         ]
       }
     },
@@ -448,6 +461,7 @@ if (reconChip) {
       $$(".js-board-col").forEach((b) => b.classList.remove("is-active"));
       btn.classList.add("is-active");
       renderCol(col);
+    try { renderCIEExposureOnly(); } catch(e) {}
     });
   });
 
@@ -695,24 +709,35 @@ function setSignals(s) {
 
 function openStopBuyingModal(profile){
     if(!modal) return;
-    const meta = (demo.stopBuyingMeta && demo.stopBuyingMeta[profile]) || { confidence: 75, band: "Moderate Confidence", breakpoint: "Confidence drops below 60% if recon exceeds $1,800." };
+    const meta = (demo.stopBuyingMeta && demo.stopBuyingMeta[profile]) || { confidence: 74, band: "Low Confidence", breakpoint: "Confidence drops below 60% if recon exceeds $1,800." };
 
     if(modalTitle) modalTitle.textContent = profile;
     if(modalSub) modalSub.textContent = `STOP BUYING • ${meta.confidence}% Confidence`;
 
-    if(modalWhere) modalWhere.textContent = "Avoid acquiring this profile at current market/recon conditions.";
+    if(modalWhere) modalWhere.textContent = "Avoid acquiring this profile under current market/recon conditions.";
     if(modalWhereNote) modalWhereNote.textContent = meta.band;
 
     if(modalMaxBuy) modalMaxBuy.textContent = "—";
-    // Reuse the 'Next best action' card to show the breakpoint (the only thing you asked to reveal)
     if(modalAction) modalAction.textContent = meta.breakpoint;
 
     // Hide action buttons for Stop Buying
     if(modalActions) modalActions.hidden = true;
 
-    modal.dataset.open = "true";
-    modal.setAttribute("aria-hidden", "false");
-}
+    // Replace the 'matches' area with what is actually driving stop-buying (on-hand / aged / bleeding units)
+    const matchesTitle = document.querySelector(".js-modalMatchesTitle");
+    if(matchesTitle) matchesTitle.textContent = "Units driving Stop Buying";
+
+    const rows = (demo.stopBuyingDrivers && (demo.stopBuyingDrivers[profile] || demo.stopBuyingDrivers["__default__"])) || [];
+    if(modalMatches){
+      // Columns are fixed in HTML: Vehicle | Source | Customer | When
+      // For Stop Buying we use: Vehicle | Where | Note | Age
+      modalMatches.innerHTML = rows.map(r=>(
+        `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td class="right">${r[3]}</td></tr>`
+      )).join("");
+    }
+
+    setModalOpen(true);
+  }
 
 
   function highlightBoardForAlignment(alignment) {
@@ -878,6 +903,780 @@ function openStopBuyingModal(profile){
     renderCol("acquire_now");
   }
 
+  /* ===========================
+     COST OF INACTION (wired demo)
+  =========================== */
+  const cieEls = {
+    loss: document.getElementById("cieLoss"),
+    lossDelta: document.getElementById("cieLossDelta"),
+    avoided: document.getElementById("cieAvoided"),
+    escCount: document.getElementById("cieEscCount"),
+    nextEsc: document.getElementById("cieNextEsc"),
+    barFill: document.getElementById("cieBarFill"),
+    barKnob: document.getElementById("cieBarKnob"),
+    rows: document.getElementById("cieRowsRight"),
+    attentionFlowList: document.getElementById("attentionFlowList"),
+    agedTodayList: document.getElementById("agedTodayList"),
+    resolvedTodayList: document.getElementById("resolvedTodayList"),
+    openLedgerBtn: document.getElementById("openLedgerBtn"),
+    ledger: document.getElementById("ledger"),
+    ledgerBackdrop: document.getElementById("ledgerBackdrop"),
+    closeLedgerBtn: document.getElementById("closeLedgerBtn"),
+    ledgerBody: document.getElementById("ledgerBody"),
+    ledgerLoss: document.getElementById("ledgerLoss"),
+    ledgerEscPct: document.getElementById("ledgerEscPct"),
+    ledgerAvgDays: document.getElementById("ledgerAvgDays"),
+    ledgerTopCat: document.getElementById("ledgerTopCat"),
+    ledgerDetail: document.getElementById("ledgerDetail"),
+    ledgerDetailContent: document.getElementById("ledgerDetailContent"),
+    closeDetailBtn: document.getElementById("closeDetailBtn"),
+    ledgerRange: document.getElementById("ledgerRange"),
+    ledgerType: document.getElementById("ledgerType"),
+    ledgerDept: document.getElementById("ledgerDept"),
+    ledgerStatus: document.getElementById("ledgerStatus")
+  };
+
+  // COI extensions: lightweight "Handled" tracking (demo only)
+  const cieHandled = new Set(); // ids marked as handled
+  const cieResolvedLog = [
+    { id: "res-acq-1", lane: "Online Buy Opportunity", col: "acquire_now", status: "Released", when: "Handled today" },
+    { id: "res-int-1", lane: "Service Retention Lead", col: "internal_supply", status: "Assigned", when: "Handled today" }
+  ]; // {id,label,amt,time,when,outcome,col}
+
+  function ensureHandledModal(){
+    let modal = document.getElementById("coiHandledModal");
+    if(modal) return modal;
+    modal = document.createElement("div");
+    modal.id = "coiHandledModal";
+    modal.className = "oa-tip"; // reuse overlay behavior styling
+    modal.dataset.open = "false";
+    modal.innerHTML = `
+      <div class="oa-tip__panel" role="dialog" aria-hidden="true">
+        <div class="oa-tip__title">What happened?</div>
+        <div class="oa-tip__body">
+          <div class="coiHandled__grid">
+            <button class="coiHandled__btn" data-outcome="Completed">✅ Completed</button>
+            <button class="coiHandled__btn" data-outcome="Deferred">⏸️ Deferred</button>
+            <button class="coiHandled__btn" data-outcome="Passed / Released">❌ Passed / Released</button>
+            <button class="coiHandled__btn" data-outcome="Reassigned">🔁 Reassigned</button>
+          </div>
+          <div class="coiHandled__note">No explanation required. Just acknowledgment.</div>
+        </div>
+      </div>`;
+    document.addEventListener("DOMContentLoaded", () => document.body.appendChild(modal));
+    modal.addEventListener("click", (e) => { if(e.target === modal) setOpen(false); });
+
+    function setOpen(open){
+      modal.dataset.open = open ? "true" : "false";
+      const panel = modal.querySelector(".oa-tip__panel");
+      if(panel) panel.setAttribute("aria-hidden", open ? "false" : "true");
+    }
+    modal._setOpen = setOpen;
+    return modal;
+  }
+
+  function openHandledModal(item){
+    const modal = ensureHandledModal();
+    modal._current = item;
+    modal._setOpen(true);
+  }
+
+  function closeHandledModal(){
+    const modal = document.getElementById("coiHandledModal");
+    if(modal && modal._setOpen) modal._setOpen(false);
+  }
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest && e.target.closest(".coiHandled__btn");
+    const modal = document.getElementById("coiHandledModal");
+    if(!btn || !modal || !modal._current) return;
+    const outcome = btn.getAttribute("data-outcome") || "Completed";
+    const item = modal._current;
+    cieHandled.add(item.id);
+    cieResolvedLog.unshift({
+      id: item.id,
+      label: item.lane || "Opportunity",
+      amt: fmtMoney(item.estLoss || 0),
+      time: outcome,
+      when: Date.now(),
+      outcome,
+      col: item.col
+    });
+    // slight nudge to exposure when handled
+    try{ renderCIE(); }catch(err){}
+    closeHandledModal();
+  });
+
+
+  function parseMoneyCell(s){
+    const n = Number(String(s || "").replace(/[^0-9.-]/g, ""));
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+  function fmtCountdown(ms){
+    const total = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    if (h <= 0) return `${m}m`;
+    return `${h}h ${m}m`;
+  }
+
+  function focusCol(col){
+    const btn = document.querySelector(`.js-board-col[data-col="${col}"]`);
+    if (!btn) return;
+    activeCol = col;
+    $$(".js-board-col").forEach((b) => b.classList.remove("is-active"));
+    btn.classList.add("is-active");
+    renderCol(col);
+    try{ renderCIEExposureOnly(); }catch(e){}
+    try { renderCIEExposureOnly(); } catch(e) {}
+    btn.scrollIntoView?.({ behavior: "smooth", block: "nearest" });
+  }
+
+  
+function highlightProfileInTable(profile){
+  const wrap = document.querySelector('.js-tableWrap');
+  const body = document.querySelector('.js-tableBody');
+  if (!wrap || !body) return;
+  const key = String(profile || '').split('•')[0].trim();
+  if (!key) return;
+
+  const rows = Array.from(body.querySelectorAll('tr[data-profile]'));
+  let target = rows.find(r => String(r.dataset.profile || '').includes(key));
+  if (!target){
+    // fallback: looser match
+    target = rows.find(r => String(r.dataset.profile || '').toLowerCase().includes(key.toLowerCase()));
+  }
+  if (!target) return;
+
+  rows.forEach(r => r.classList.remove('row-highlight'));
+  target.classList.add('row-highlight');
+
+  // scroll within the table wrap
+  const top = target.offsetTop - 48;
+  wrap.scrollTop = Math.max(0, top);
+
+  window.setTimeout(() => target.classList.remove('row-highlight'), 2200);
+}
+
+function buildCIEModel(){
+    const now = Date.now();
+
+    const candidates = [];
+
+    // Capital at Risk candidates (use provided Revenue at Risk)
+    (demo.details.capital_risk?.rows || []).forEach((r, i) => {
+      const vehicle = String(r[0] || "Unit");
+      const days = Number(String(r[1] || "0").replace(/[^0-9]/g, "")) || (30 + i * 2);
+      const estLoss = parseMoneyCell(r[2]);
+      candidates.push({
+        id: `cie-cap-${i}`,
+        lane: "Capital at Risk",
+        col: "capital_risk",
+        dept: "Used",
+        owner: "Inventory",
+        profile: vehicle,
+        estLoss: estLoss || 1500,
+        days,
+        reason: "Revenue at risk accelerates after the store's lot-day inflection."
+      });
+    });
+
+    // Acquire Now candidates (use target gross as a proxy for value at risk)
+    (demo.details.acquire_now?.rows || []).forEach((r, i) => {
+      const profile = String(r[1] || r[0] || "Profile");
+      const math = (demo.acquireMath && demo.acquireMath[profile]) ? demo.acquireMath[profile] : null;
+      const estLoss = (math?.targetGross || 2800) + 200; // small lift for opportunity cost
+      candidates.push({
+        id: `cie-acq-${i}`,
+        lane: "Acquire Now",
+        col: "acquire_now",
+        dept: "Used",
+        owner: "Acquisitions",
+        profile,
+        estLoss,
+        days: 1 + (i % 5),
+        reason: "High-gross profile available; decay increases as competitors source first."
+      });
+    });
+
+    // Internal Supply candidates (service / appraisals rows)
+    const svc = demo.details.internal_supply?.views?.service?.rows || [];
+    const appr = demo.details.internal_supply?.views?.appraisals?.rows || [];
+    svc.slice(0, 4).forEach((r, i) => {
+      const vehicle = String(r[0] || "Internal unit");
+      candidates.push({
+        id: `cie-int-s-${i}`,
+        lane: "Internal Supply",
+        col: "internal_supply",
+        dept: "Service",
+        owner: "Used Manager",
+        profile: vehicle,
+        internalSource: "Service",
+        estLoss: 2400 + i * 250,
+        days: 1 + (i % 4),
+        reason: "Internal equity opportunity; probability decays as touchpoints lapse."
+      });
+    });
+    appr.slice(0, 3).forEach((r, i) => {
+      const vehicle = String(r[0] || "Internal unit");
+      candidates.push({
+        id: `cie-int-a-${i}`,
+        lane: "Internal Supply",
+        col: "internal_supply",
+        dept: "Sales",
+        owner: "Used Manager",
+        profile: vehicle,
+        internalSource: "Appraisal",
+        estLoss: 2100 + i * 200,
+        days: 2 + (i % 4),
+        reason: "Live appraisal window; value decays quickly without rapid follow-up."
+      });
+    });
+
+    // Stop Buying candidates (use a conservative gross leakage proxy)
+    Object.keys(demo.stopBuyingMeta || {}).slice(0, 4).forEach((k, i) => {
+      const meta = demo.stopBuyingMeta[k];
+      const estLoss = 1300 + i * 150;
+      candidates.push({
+        id: `cie-stop-${i}`,
+        lane: "Stop Buying",
+        col: "stop_buying",
+        dept: "Used",
+        owner: "Acquisitions",
+        profile: k,
+        estLoss,
+        days: 3 + (i % 5),
+        reason: meta?.breakpoint ? meta.breakpoint : "Repeated trim mix underperforms here." 
+      });
+    });
+
+    // Sort by economic weight
+    const sorted = candidates.slice().sort((a, b) => (b.estLoss || 0) - (a.estLoss || 0));
+    const approaching = [
+      {
+        id: "appr-cap-1",
+        lane: "Capital at Risk Soon",
+        col: "capital_risk",
+        dept: "Used",
+        owner: "Used Car Manager",
+        profile: "2021 Yukon SLT",
+        estLoss: 4800,
+        days: 2,
+        reason: "Aging unit; gross erodes as market moves.",
+        why: "Escalation pending",
+        escalatesAt: now + 6 * 60 * 60 * 1000,
+        displayTime: "6 hrs remaining"
+      },
+      {
+        id: "appr-int-1",
+        lane: "Service Retention Opportunity",
+        col: "internal_supply",
+        dept: "Service",
+        owner: "Service Manager",
+        profile: "High-equity RO unassigned",
+        estLoss: 2100,
+        days: 1,
+        reason: "High-equity customer; probability decays as RO closes.",
+        why: "RO closing soon",
+        escalatesAt: now + 12 * 60 * 60 * 1000,
+        displayTime: "Today"
+      },
+      {
+        id: "appr-acq-1",
+        lane: "Online Appraisal Review",
+        col: "acquire_now",
+        dept: "Used",
+        owner: "GM",
+        profile: "Online appraisal / trade review",
+        estLoss: 1300,
+        days: 0,
+        reason: "Buy leverage decays with time; competitor bids increase.",
+        why: "Leverage decays with time",
+        escalatesAt: now + 24 * 60 * 60 * 1000,
+        displayTime: "Tomorrow"
+      }
+    ];
+
+    const capSum = sorted.filter(x => x.col === "capital_risk").slice(0, 7).reduce((s, x) => s + (x.estLoss || 0), 0);
+    const internalSum = sorted.filter(x => x.col === "internal_supply").slice(0, 7).reduce((s, x) => s + (x.estLoss || 0), 0);
+    const otherSum = sorted.filter(x => x.col !== "capital_risk" && x.col !== "internal_supply").slice(0, 7).reduce((s, x) => s + (x.estLoss || 0), 0);
+
+    const preventableLoss30 = Math.round(capSum + internalSum * 0.45 + otherSum * 0.25);
+    const preventableLossDelta = Math.round(preventableLoss30 * 0.18);
+    const lossAvoided30 = Math.round(preventableLoss30 * 0.52);
+
+    // Exposure (Rolling 30 Days)
+// For demo credibility we anchor exposure to *visible* dashboard numbers:
+//   - Preventable Loss (30d)
+//   - Capital at Risk (tile value)
+//   - Approaching Escalation dollars + count pressure
+// Then we add a small context nudge based on which tile is active (handled in renderCIE).
+const capAtRisk = Number(demo?.board?.capital_risk?.value) || Math.max(1, Math.round(preventableLoss30 * 1.35));
+const escDollars = (approaching || []).reduce((s,o)=> s + (Number(o.estLoss)||0), 0);
+const escCount = (approaching || []).length;
+
+// Base exposure: "how much preventable loss is stacking up relative to capital at risk?"
+const base = preventableLoss30 / Math.max(1, capAtRisk);
+
+// Urgency: escalation dollars represent near-term exposure.
+const urgency = (escDollars / Math.max(1, capAtRisk));
+
+// Count pressure: small additive bump; capped so it stays "slight".
+const countPressure = Math.min(0.15, escCount * 0.05);
+
+const exposureBasePct = clamp(Math.round((base + urgency + countPressure) * 100), 6, 95);
+
+// Lane risk shares for slight context movement when tiles are clicked.
+function laneDecayWeight(col){
+  if(col === "internal_supply") return 1.35;
+  if(col === "external") return 1.20;
+  if(col === "acquire_now") return 1.00;
+  if(col === "capital_risk") return 0.95;
+  if(col === "stop_buying") return 0.70;
+  return 1.00;
+}
+function ageWeight(days){
+  const d = Math.max(0, Number(days) || 0);
+  return clamp(0.75 + (d / 6.5), 0.75, 1.55);
+}
+const topRiskPool = sorted.slice(0, 15);
+const laneRisk = topRiskPool.reduce((m, o) => {
+  const base = Number(o.estLoss) || 0;
+  const r = base * laneDecayWeight(o.col) * ageWeight(o.days);
+  m[o.col] = (m[o.col] || 0) + r;
+  m.__total = (m.__total || 0) + r;
+  return m;
+}, {});
+const totalRisk = Math.max(1, laneRisk.__total || 1);
+const avgShare = 0.20; // 5 lanes
+const exposureDeltaByCol = ["acquire_now","internal_supply","external","capital_risk","stop_buying"].reduce((m, col) => {
+  const share = (laneRisk[col] || 0) / totalRisk;
+  m[col] = clamp(Math.round((share - avgShare) * 40), -6, 6);
+  return m;
+}, {});
+
+const exposurePct = exposureBasePct;
+
+    // Ledger rows (derived from candidates; immutable demo)
+    const ledgerRows = sorted.slice(0, 12).map((o, i) => {
+      const dayBack = i + 1;
+      const d = new Date(now - dayBack * 24 * 60 * 60 * 1000);
+      const date = d.toLocaleDateString(undefined, { month: "short", day: "2-digit" });
+      const statusCycle = ["Expired", "Escalated", "Dismissed", "Expired"]; 
+      const status = statusCycle[i % statusCycle.length];
+      const escalated = status === "Escalated" || (status === "Expired" && i % 2 === 0) ? "Yes" : "No";
+      const loss = status === "Dismissed" ? 0 : status === "Escalated" ? Math.round(o.estLoss * 0.45) : Math.round(o.estLoss);
+      const grossLow = Math.round(o.estLoss * 0.88);
+      const grossHigh = Math.round(o.estLoss * 1.12);
+      const grossRange = `${fmtMoney(grossLow)}–${fmtMoney(grossHigh)}`;
+      const timeline = status === "Dismissed"
+        ? ["Surfaced", "Review attempted", "Dismissed (reason logged)"]
+        : status === "Escalated"
+          ? ["Surfaced", "Warning shown", "Countdown reached", "Escalated to GM"]
+          : ["Surfaced", "Warning shown", "Countdown reached", "Expired"];
+      return {
+        id: `led-${i}`,
+        date,
+        type: o.lane,
+        dept: o.dept,
+        owner: o.owner,
+        profile: o.profile,
+        grossRange,
+        days: o.days,
+        status,
+        loss,
+        escalated,
+        confidence: o.col === "acquire_now" ? ((demo.acquireMath?.[o.profile]?.confidence || 80) / 100) : 0.68,
+        decay: o.col === "internal_supply" ? "Fast" : o.col === "capital_risk" ? "Medium" : "Slow",
+        timeline
+      };
+    });
+
+    const escPct = Math.round((ledgerRows.filter(r => r.escalated === "Yes").length / Math.max(1, ledgerRows.length)) * 100);
+    const avgDays = (ledgerRows.reduce((s, r) => s + (Number(r.days) || 0), 0) / Math.max(1, ledgerRows.length)).toFixed(1);
+    const topCat = Object.entries(
+      ledgerRows.reduce((m, r) => (m[r.type] = (m[r.type] || 0) + 1, m), {})
+    ).sort((a,b)=>b[1]-a[1])[0]?.[0] || "—";
+
+    return {
+      preventableLoss30,
+      preventableLossDelta,
+      lossAvoided30,
+      exposureBasePct,
+      exposureDeltaByCol,
+      exposurePct,
+      approaching,
+      ledgerRows,
+      escPct,
+      avgDays,
+      topCat
+    };
+  }
+
+  let cieModel = null;
+
+  
+  function getCieBadge(o){
+    const col = String(o?.col || "");
+    if (col === "capital_risk") return "CR";
+    if (col === "internal_supply") return "SR";
+    if (col === "acquire_now") return "AN";
+    if (col === "external") return "EX";
+    if (col === "stop_buying") return "SB";
+    return "OA";
+  }
+function renderCIERows(){
+    if (!cieEls.rows) return;
+    cieEls.rows.innerHTML = "";
+    (cieModel?.approaching || []).filter(o => !cieHandled.has(o.id)).forEach((o) => {
+      const el = document.createElement("div");
+      el.className = "cieRow";
+      el.title = o.why;
+      el.innerHTML = `
+        <div class="cieRow__type">
+          <div class="cieRow__badge" aria-hidden="true">${getCieBadge(o)}</div>
+          <div class="cieRow__stack">
+            <div class="cieRow__name">${String(o.lane || "Opportunity")}</div>
+            <div class="cieRow__why">${String(o.why || "")}</div>
+          </div>
+        </div>
+        <div class="cieRow__stack">
+          <div class="cieRow__val">${fmtMoney(o.estLoss || 0)}</div>
+          <div class="cieRow__sub">Est. loss</div>
+        </div>
+        <div class="cieRow__stack">
+          <div class="cieRow__val cie__mono" data-escalate="${o.escalatesAt}">—</div>
+          <div class="cieRow__sub">Escalates in</div>
+        </div>
+        <div class="cieRow__actions">
+          <button class="cieRow__btn" type="button" data-review="${o.id}">Review</button>
+          <button class="cieRow__btnSecondary" type="button" data-handle="${o.id}">Mark as Handled</button>
+        </div>
+      `;
+      cieEls.rows.appendChild(el);
+    });
+
+    // Wire review buttons
+    $$('[data-review]', cieEls.rows).forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-review');
+        const item = (cieModel?.approaching || []).find(x => x.id === id);
+        if (!item) return;
+        openFromCIE(item);
+      });
+
+
+    // Wire handle buttons
+    $$('[data-handle]', cieEls.rows).forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-handle');
+        const item = (cieModel?.approaching || []).find(x => x.id === id);
+        if (!item) return;
+        openHandledModal(item);
+      });
+    });
+    });
+  }
+
+  function updateCIECountdowns(){
+    if (!cieModel) return;
+    const now = Date.now();
+    const times = (cieModel.approaching || []).map(o => o.escalatesAt || now + 9999999);
+    const next = times.length ? Math.min(...times) : null;
+    if (cieEls.nextEsc) cieEls.nextEsc.textContent = next ? fmtCountdown(next - now) : "—";
+    $$('[data-escalate]').forEach((node) => {
+      const t = Number(node.getAttribute('data-escalate'));
+      node.textContent = fmtCountdown(t - now);
+    });
+  }
+
+
+  
+
+  function severityClass(item){
+    // derive severity from time remaining
+    const now = Date.now();
+    const t = Number(item.escalatesAt || now + 9999999);
+    const ms = t - now;
+    if(ms <= 6*60*60*1000) return "red";
+    if(ms <= 16*60*60*1000) return "amber";
+    return "yellow";
+  }
+
+  function renderCOIDashboard(){
+    // Attention Flow: top 3 by (estLoss weighted by time remaining)
+    const listEl = cieEls.attentionFlowList;
+    const agedEl = cieEls.agedTodayList;
+    const resEl = cieEls.resolvedTodayList;
+    const approaching = (cieModel?.approaching || []).filter(o => !cieHandled.has(o.id));
+
+    function score(o){
+      const now = Date.now();
+      const t = Number(o.escalatesAt || now + 9999999);
+      const hrs = Math.max(0.25, (t - now) / (60*60*1000));
+      return (Number(o.estLoss)||0) / hrs;
+    }
+
+    const top = approaching.slice().sort((a,b)=>score(b)-score(a)).slice(0,3);
+
+    if(listEl){
+      listEl.innerHTML = top.map(o => {
+        const sev = severityClass(o);
+        return `
+          <button class="coiItem coiItem--${sev}" type="button" data-coi-col="${o.col}" data-coi-id="${o.id}">
+            <div class="coiItem__left">
+              <div class="coiItem__label">${String(o.lane || "Opportunity")}</div>
+              <div class="coiItem__sub">${String(o.owner || "Next touch owner")}</div>
+            </div>
+            <div class="coiItem__right">
+              <div class="coiItem__amt">${fmtMoney(o.estLoss || 0)}</div>
+              <div class="coiItem__time">${o.displayTime ? o.displayTime : (fmtCountdown((o.escalatesAt||Date.now()) - Date.now()) + " remaining")}</div>
+            </div>
+          </button>`;
+      }).join("") || `<div class="muted">No items approaching escalation.</div>`;
+    }
+
+    // Aged Today: demo-specific threshold crossings (dealer-readable)
+    const agedDemo = [
+      { id: "aged-cap-1", lane: "Used Car Buy crossed 48 hrs", col: "capital_risk", estLoss: 3800, sub: "Now at risk", severity: "red" },
+      { id: "aged-int-1", lane: "High-equity service RO unassigned", col: "internal_supply", estLoss: 1600, sub: "RO closing soon", severity: "amber" }
+    ];
+
+    if(agedEl){
+      agedEl.innerHTML = agedDemo.map(o => {
+        const sev = o.severity === "red" ? "red" : o.severity === "amber" ? "amber" : "yellow";
+        return `
+          <button class="coiItem coiItem--${sev}" type="button" data-coi-col="${o.col}" data-coi-id="${o.id}">
+            <div class="coiItem__left">
+              <div class="coiItem__label">${String(o.lane)}</div>
+              <div class="coiItem__sub">${String(o.sub)}</div>
+            </div>
+            <div class="coiItem__right">
+              <div class="coiItem__amt">${fmtMoney(o.estLoss || 0)}</div>
+              <div class="coiItem__time">Today</div>
+            </div>
+          </button>`;
+      }).join("") || `<div class="muted">No threshold crossings today.</div>`;
+    }
+
+    // Resolved Today: from log
+    if(resEl){
+      const recent = cieResolvedLog.slice(0,3);
+      resEl.innerHTML = recent.map(r => `
+        <div class="coiItem" role="group" aria-label="Resolved item">
+          <div class="coiItem__left">
+            <div class="coiItem__label">✔ ${String(r.label || "Opportunity")}</div>
+            <div class="coiItem__sub">${String(r.outcome || "Handled")}</div>
+          </div>
+          <div class="coiItem__right">
+            <div class="coiItem__amt">${String(r.amt || "—")}</div>
+            <div class="coiItem__time">Handled</div>
+          </div>
+        </div>
+      `).join("") || `<div class="muted">Nothing handled yet today.</div>`;
+    }
+
+    // Wire row clicks → focus relevant tile and open context
+    document.querySelectorAll("[data-coi-col]").forEach(btn => {
+      btn.onclick = () => {
+        const col = btn.getAttribute("data-coi-col");
+        if(!col) return;
+        focusCol(col);
+      };
+    });
+
+    // Update micro COI on tiles
+    ["acquire_now","internal_supply","external","capital_risk","stop_buying"].forEach(col => {
+      const micro = document.getElementById(`coiMicro-${col}`);
+      if(!micro) return;
+      const items = approaching.filter(o => o.col === col);
+      const sum = items.reduce((s,o)=> s + (Number(o.estLoss)||0), 0);
+      {
+      const valEl = micro.querySelector(".board-col__coiVal");
+      const label = (col === "acquire_now")
+        ? (sum ? `${fmtMoney(sum)} expires if delayed` : "No items aging")
+        : (col === "internal_supply")
+          ? (sum ? `${fmtMoney(sum)} invisible unless touched` : "No immediate risk")
+          : (col === "capital_risk")
+            ? (sum ? `${fmtMoney(sum)} approaching escalation` : "No immediate risk")
+            : (sum ? `${fmtMoney(sum)} at risk` : "No immediate risk");
+
+      if (valEl) valEl.textContent = label;
+
+      // Tooltip (hover only, no clutter)
+      const tip = (col === "acquire_now")
+        ? "Dealer speak: this is money you can make or save, but it decays if the buy/appraisal sits untouched."
+        : (col === "internal_supply")
+          ? "Dealer speak: high-equity customers / internal opportunities that quietly pass through unless someone owns the next touch."
+          : (col === "capital_risk")
+            ? "Dealer speak: units already owned where time is now working against you—this is what escalates if nobody touches it."
+            : "Dealer speak: value that gets more expensive the longer it waits.";
+      micro.setAttribute("data-tip", tip);
+    }
+      const tileBtn = document.querySelector(`.js-board-col[data-col="${col}"]`);
+      if(tileBtn) tileBtn.classList.toggle("is-hot", sum > 0 && col !== "stop_buying");
+    });
+  }
+function getContextExposurePct(){
+    if(!cieModel) return 0;
+    const base = Number(cieModel.exposureBasePct ?? cieModel.exposurePct ?? 0) || 0;
+    const deltas = cieModel.exposureDeltaByCol || {};
+    const delta = Number(deltas[activeCol] || 0);
+    const handledAdj = Math.min(8, cieHandled.size * 2);
+    return clamp(Math.round(base + delt - handledAdja), 0, 100);
+  }
+
+  function renderCIEExposureOnly(){
+    if (!cieEls.barFill) return;
+    const p = getContextExposurePct();
+    const cover = clamp(100 - p, 0, 100);
+    cieEls.barFill.style.width = `${cover}%`;
+    if (cieEls.barKnob){
+      cieEls.barKnob.style.left = `${p}%`;
+      cieEls.barKnob.setAttribute("aria-label", `Exposure ${p}%`);
+    }
+  }
+
+  function renderCIE(){
+    // If dashboard is embedded elsewhere, fail silently.
+    if (!cieEls.loss || !cieEls.openLedgerBtn) return;
+
+    if (!cieModel) cieModel = buildCIEModel();
+
+    cieEls.loss.textContent = fmtMoney(cieModel.preventableLoss30);
+    cieEls.lossDelta.textContent = `↑ ${fmtMoney(cieModel.preventableLossDelta)} vs prior 30 days`;
+    cieEls.avoided.textContent = fmtMoney(cieModel.lossAvoided30);
+    cieEls.escCount.textContent = String((cieModel.approaching || []).length);
+    renderCIEExposureOnly();
+
+    renderCIERows();
+    updateCIECountdowns();
+    renderCOIDashboard();
+  }
+
+  function openLedger(){
+    if (!cieEls.ledger) return;
+    cieEls.ledger.classList.add('isOpen');
+    cieEls.ledger.setAttribute('aria-hidden', 'false');
+    renderLedger();
+  }
+  function closeLedger(){
+    if (!cieEls.ledger) return;
+    cieEls.ledger.classList.remove('isOpen');
+    cieEls.ledger.setAttribute('aria-hidden', 'true');
+    closeLedgerDetail();
+  }
+
+  function closeLedgerDetail(){
+    if (!cieEls.ledgerDetail) return;
+    cieEls.ledgerDetail.classList.remove('isOpen');
+    cieEls.ledgerDetail.setAttribute('aria-hidden', 'true');
+    if (cieEls.ledgerDetailContent) cieEls.ledgerDetailContent.innerHTML = "";
+  }
+
+  function openLedgerDetail(row){
+    if (!cieEls.ledgerDetail || !cieEls.ledgerDetailContent) return;
+    cieEls.ledgerDetail.classList.add('isOpen');
+    cieEls.ledgerDetail.setAttribute('aria-hidden', 'false');
+    cieEls.ledgerDetailContent.innerHTML = `
+      <div class="detailBlock">
+        <div class="detailTitle">Opportunity Summary</div>
+        <div class="detailRow"><span>Type</span><span>${row.type}</span></div>
+        <div class="detailRow"><span>Date surfaced</span><span>${row.date}</span></div>
+        <div class="detailRow"><span>Profile</span><span>${row.profile}</span></div>
+        <div class="detailRow"><span>Estimated gross range</span><span>${row.grossRange}</span></div>
+        <div class="detailRow"><span>Decay profile</span><span>${row.decay}</span></div>
+      </div>
+      <div class="detailBlock">
+        <div class="detailTitle">Action Timeline</div>
+        ${(row.timeline || []).map(x=>`<div class="detailRow"><span>${x}</span><span></span></div>`).join('')}
+      </div>
+      <div class="detailBlock">
+        <div class="detailTitle">Cost Breakdown</div>
+        <div class="detailRow"><span>Status</span><span>${row.status}</span></div>
+        <div class="detailRow"><span>Recorded preventable loss</span><span>${fmtMoney(row.loss || 0)}</span></div>
+        <div class="cie__meta" style="margin-top:8px;">Recorded based on surfaced data and time-based decay model.</div>
+      </div>
+    `;
+  }
+
+  function getLedgerFiltered(){
+    const type = cieEls.ledgerType?.value || 'all';
+    const dept = cieEls.ledgerDept?.value || 'all';
+    const status = cieEls.ledgerStatus?.value || 'all';
+
+    return (cieModel?.ledgerRows || []).filter(r => {
+      const okType = type === 'all' || r.type === type;
+      const okDept = dept === 'all' || r.dept === dept;
+      const okStatus = status === 'all' || r.status === status;
+      return okType && okDept && okStatus;
+    });
+  }
+
+  function renderLedger(){
+    if (!cieEls.ledgerBody) return;
+    const rows = getLedgerFiltered();
+
+    // KPIs
+    if (cieEls.ledgerLoss) cieEls.ledgerLoss.textContent = fmtMoney(cieModel.preventableLoss30);
+    if (cieEls.ledgerEscPct) cieEls.ledgerEscPct.textContent = `${cieModel.escPct}%`;
+    if (cieEls.ledgerAvgDays) cieEls.ledgerAvgDays.textContent = String(cieModel.avgDays);
+    if (cieEls.ledgerTopCat) cieEls.ledgerTopCat.textContent = String(cieModel.topCat);
+
+    cieEls.ledgerBody.innerHTML = "";
+    rows.forEach((r) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${r.date}</td>
+        <td>${r.type}</td>
+        <td>${r.dept}</td>
+        <td>${r.owner}</td>
+        <td>${r.grossRange}</td>
+        <td>${r.days}</td>
+        <td>${r.status}</td>
+        <td>${fmtMoney(r.loss || 0)}</td>
+        <td>${r.escalated}</td>
+        <td><button class="ledger__viewBtn" type="button" data-ledger="${r.id}">View →</button></td>
+      `;
+      cieEls.ledgerBody.appendChild(tr);
+    });
+
+    $$('[data-ledger]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-ledger');
+        const row = (cieModel?.ledgerRows || []).find(x => x.id === id);
+        if (row) openLedgerDetail(row);
+      });
+    });
+  }
+
+  function openFromCIE(item){
+    if (!item?.col) return;
+
+    // Switch the active tile and render the center panel.
+    focusCol(item.col);
+
+    // Then highlight the matching row in the center table (no modal).
+    window.setTimeout(() => {
+      highlightProfileInTable(item.profile);
+    }, 60);
+  }
+
+  // Wire ledger UI
+  cieEls.openLedgerBtn?.addEventListener('click', openLedger);
+  cieEls.closeLedgerBtn?.addEventListener('click', closeLedger);
+  cieEls.ledgerBackdrop?.addEventListener('click', closeLedger);
+  cieEls.closeDetailBtn?.addEventListener('click', closeLedgerDetail);
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && cieEls.ledger?.classList.contains('isOpen')) closeLedger(); });
+  ;[cieEls.ledgerType, cieEls.ledgerDept, cieEls.ledgerStatus].forEach((el)=>{
+    el?.addEventListener('change', ()=>{ closeLedgerDetail(); renderLedger(); });
+  });
+
+
   
   // Dealer name + login stamp
   const dealerNameInput = document.querySelector(".js-dealerName");
@@ -907,12 +1706,289 @@ function openStopBuyingModal(profile){
   });
 
   // stamp once on load; update every minute for "live" feel
-  window.addEventListener("load", ()=>{
+  document.addEventListener("DOMContentLoaded", ()=>{
     loadDealerName();
     setLoginStamp();
+    try{ renderCIE(); }catch(e){}
+    try{ setInterval(updateCIECountdowns, 30000); }catch(e){}
     setInterval(setLoginStamp, 60000);
+    // Open default view right away so the UI never shows placeholders
+    try{ initDefaultOpen(); }catch(e){}
   });
 
-  window.addEventListener("load", initDefaultOpen);
+})();
 
+
+/* ==============================
+   DEMO DATA — COST OF INACTION
+   (Dashboard population + tiles)
+   ============================== */
+
+(function () {
+  // Utilities
+  function $(sel, root = document) { return root.querySelector(sel); }
+
+  function fmt(n) {
+    try { return n.toLocaleString("en-US"); } catch (e) { return String(n); }
+  }
+
+  function severityClass(sev) {
+    if (sev === "red") return "coiItem coiItem--red";
+    if (sev === "amber") return "coiItem coiItem--amber";
+    return "coiItem coiItem--yellow";
+  }
+
+  function renderCOIList(containerId, items) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+
+    el.innerHTML = items.map(item => {
+      const cls = severityClass(item.severity);
+      const tipAttr = item.tip ? ` data-tip="${item.tip.replace(/"/g, "&quot;")}"` : "";
+      return `
+        <div class="${cls}" data-target="${item.target || ""}"${tipAttr}>
+          <div class="coiItem__left">
+            <div class="coiItem__label">${item.label}</div>
+            <div class="coiItem__sub">${item.sub || ""}</div>
+          </div>
+          <div class="coiItem__right">
+            <div class="coiItem__amt">${item.amount}</div>
+            <div class="coiItem__time">${item.time}</div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function setText(id, txt) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = txt;
+  }
+
+  function setBar(pct) {
+    const bar = document.getElementById("cieBarFill");
+    if (bar) bar.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+  }
+
+  // --- Demo story data (exactly as discussed)
+  const attentionFlowItems = [
+    {
+      label: "Used Car Buy Decision",
+      sub: "Confirm buy / pass decision today",
+      amount: "$4,200",
+      time: "6 hrs remaining",
+      severity: "red",
+      target: "acquire_now",
+      tip: "This is time-sensitive leverage. If nobody touches it, the opportunity decays or expires."
+    },
+    {
+      label: "Service Retention Opportunity",
+      sub: "Assign follow-up before RO closes",
+      amount: "$2,100",
+      time: "Today",
+      severity: "amber",
+      target: "internal_supply",
+      tip: "High-equity customers passing through unflagged is silent loss. Outcome makes it visible before it disappears."
+    },
+    {
+      label: "Online Appraisal Review",
+      sub: "Approve / release before end of day",
+      amount: "$1,300",
+      time: "Tomorrow",
+      severity: "yellow",
+      target: "acquire_now",
+      tip: "Not a ‘risk score’. This is value that can evaporate if the decision sits."
+    }
+  ];
+
+  const agedTodayItems = [
+    {
+      label: "Used Car Buy crossed 48 hrs",
+      sub: "Escalation triggered",
+      amount: "$3,800 at risk",
+      time: "Now requires acknowledgment",
+      severity: "red",
+      target: "acquire_now",
+      tip: "Past threshold. Silence is no longer neutral."
+    },
+    {
+      label: "High-equity service RO unassigned",
+      sub: "RO closing soon",
+      amount: "$1,600 at risk",
+      time: "Time-sensitive",
+      severity: "amber",
+      target: "internal_supply",
+      tip: "If the RO closes and nobody engaged, the opportunity is gone."
+    }
+  ];
+
+  const resolvedItems = [
+    {
+      label: "Online Buy Opportunity",
+      sub: "Decision recorded",
+      amount: "Released",
+      time: "Handled today",
+      severity: "yellow",
+      target: "acquire_now",
+      tip: "Outcome doesn’t care how it was handled — only that it was touched and closed."
+    },
+    {
+      label: "Service Retention Lead",
+      sub: "Owner assigned",
+      amount: "Assigned",
+      time: "Handled today",
+      severity: "yellow",
+      target: "internal_supply",
+      tip: "Closure creates calm. This is how Outcome reduces surprises."
+    }
+  ];
+
+  // Approaching Escalation rows (right panel)
+  const approachingRows = [
+    {
+      icon: "",
+      name: "Capital at Risk Soon",
+      why: "Escalation pending — requires acknowledgment",
+      value: "$4,800",
+      eta: "Next 2 hrs",
+      owner: "GM",
+      severity: "red"
+    },
+    {
+      icon: "",
+      name: "Acquisition Decision",
+      why: "Buy / pass not touched",
+      value: "$2,200",
+      eta: "Today",
+      owner: "UCM",
+      severity: "amber"
+    }
+  ];
+
+  function renderApproaching(rows) {
+    const el = document.getElementById("cieRowsRight");
+    if (!el) return;
+
+    el.innerHTML = rows.map((r, idx) => {
+      const sevCls = r.severity === "red" ? "is-red" : (r.severity === "amber" ? "is-amber" : "is-yellow");
+      return `
+        <div class="cieRow ${sevCls}">
+          <div class="cieRow__type">
+            <div class="cieRow__icon"></div>
+            <div class="cieRow__stack">
+              <div class="cieRow__name">${r.name}</div>
+              <div class="cieRow__why" data-tip="Outcome escalates silence. This is visibility—not blame.">${r.why}</div>
+            </div>
+          </div>
+          <div class="cieRow__val">${r.value}</div>
+          <div class="cieRow__sub">${r.eta}</div>
+          <div class="cieRow__sub">${r.owner}</div>
+          <button class="cieRow__btn" data-handle="${idx}">Mark as Handled</button>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function wireClicks() {
+    // COI list click -> jump to tile
+    document.addEventListener("click", (e) => {
+      const item = e.target.closest(".coiItem");
+      if (!item) return;
+      const target = item.getAttribute("data-target");
+      if (!target) return;
+
+      const tileBtn = document.querySelector(`.js-board-col[data-col="${target}"]`);
+      if (tileBtn) {
+        tileBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+        tileBtn.classList.add("pulse");
+        setTimeout(() => tileBtn.classList.remove("pulse"), 650);
+      }
+    });
+
+    // Mark as handled -> move into Resolved Today + nudge bar
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".cieRow__btn");
+      if (!btn) return;
+
+      const row = btn.closest(".cieRow");
+      if (!row) return;
+
+      // convert row into a resolved entry (simple demo behavior)
+      const name = row.querySelector(".cieRow__name")?.textContent || "Item";
+      const resolved = {
+        label: name,
+        sub: "Acknowledged",
+        amount: "Handled",
+        time: "Just now",
+        severity: "yellow",
+        target: "acquire_now",
+        tip: "Handled beats perfect. Outcome records the touch and closes the loop."
+      };
+      resolvedItems.unshift(resolved);
+      renderCOIList("resolvedTodayList", resolvedItems.slice(0, 3));
+
+      // Nudge exposure bar & counters (demo)
+      setBar(42);
+
+      // Remove row from approaching list
+      row.remove();
+    });
+  }
+
+  function setTileMicro(id, text, tip) {
+    const wrap = document.getElementById(id);
+    if (!wrap) return;
+    const val = wrap.querySelector(".board-col__coiVal");
+    if (val) val.textContent = text;
+    if (tip) wrap.setAttribute("data-tip", tip);
+  }
+
+  function init() {
+    // Populate top KPIs so it doesn't look empty
+    setText("cieLoss", "$8,100");
+    setText("cieEscCount", "2");
+    setText("cieNextEsc", "2 hrs");
+    setBar(38);
+
+    // Populate right panel + dashboard modules
+    renderApproaching(approachingRows);
+    renderCOIList("attentionFlowList", attentionFlowItems);
+    renderCOIList("agedTodayList", agedTodayItems);
+    renderCOIList("resolvedTodayList", resolvedItems);
+
+    // Tile micros (dealer-speak)
+    setTileMicro(
+      "coiMicro-acquire_now",
+      "$1,300 expires if delayed",
+      "Dealer-speak: this is money you lose leverage on if the decision sits."
+    );
+    setTileMicro(
+      "coiMicro-internal_supply",
+      "$2,100 opportunity aging",
+      "Dealer-speak: high-value customers / opportunities slipping quietly."
+    );
+    setTileMicro(
+      "coiMicro-external",
+      "$900 tied up if untouched",
+      "Dealer-speak: capital/time tied up until someone makes a call."
+    );
+    setTileMicro(
+      "coiMicro-capital_risk",
+      "$4,800 escalation pending",
+      "Dealer-speak: this is about to require leadership attention if nobody touches it."
+    );
+    setTileMicro(
+      "coiMicro-stop_buying",
+      "$1,700 expires if delayed",
+      "Dealer-speak: if you wait, the deal (or advantage) disappears."
+    );
+
+    wireClicks();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
 })();
