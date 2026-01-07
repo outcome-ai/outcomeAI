@@ -7,6 +7,196 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="oa">
+    <!-- iOS-style Command Center (FIX8d) -->
+    <section class="ios-dashboard" aria-label="Outcome AI Dashboard">
+      <div class="ios-header">
+        <div class="ios-brand">
+          <div class="ios-title">OUTCOME AI</div>
+          <div class="ios-sub">Status: <span class="ios-pill">Live Demo</span></div>
+        </div>
+        <div class="ios-dealer">
+          <div class="ios-dealer__name" id="dealerName">Dealer Name</div>
+          <div class="ios-dealer__meta">Login: <span id="loginStamp">—</span></div>
+        </div>
+      </div>
+
+      <!-- Operational (5) -->
+      <!-- Fallback gauges are rendered in HTML so the circles never disappear if JS fails to run. -->
+      <div class="ios-row ios-row--gauges ios-row--5" id="iosGaugesOperational">
+        <div class="ios-gaugeWrap" aria-label="Acquire Now (fallback)">
+          <div class="ios-gauge">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="32" cy="32" r="29" stroke="rgba(15,23,42,0.12)" stroke-width="6" fill="none"></circle>
+              <circle cx="32" cy="32" r="29" stroke="rgba(255,90,90,0.92)" stroke-width="6" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
+            </svg>
+            <div class="ios-gauge__val">7</div>
+          </div>
+        </div>
+        <div class="ios-gaugeWrap" aria-label="Internal Supply (fallback)">
+          <div class="ios-gauge">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="32" cy="32" r="29" stroke="rgba(15,23,42,0.12)" stroke-width="6" fill="none"></circle>
+              <circle cx="32" cy="32" r="29" stroke="rgba(255,190,90,0.92)" stroke-width="6" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
+            </svg>
+            <div class="ios-gauge__val">21</div>
+          </div>
+        </div>
+        <div class="ios-gaugeWrap" aria-label="External (fallback)">
+          <div class="ios-gauge">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="32" cy="32" r="29" stroke="rgba(15,23,42,0.12)" stroke-width="6" fill="none"></circle>
+              <circle cx="32" cy="32" r="29" stroke="rgba(15,23,42,0.55)" stroke-width="6" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
+            </svg>
+            <div class="ios-gauge__val">5</div>
+          </div>
+        </div>
+        <div class="ios-gaugeWrap" aria-label="Capital at Risk (fallback)">
+          <div class="ios-gauge">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="32" cy="32" r="29" stroke="rgba(15,23,42,0.12)" stroke-width="6" fill="none"></circle>
+              <circle cx="32" cy="32" r="29" stroke="rgba(255,90,90,0.92)" stroke-width="6" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
+            </svg>
+            <div class="ios-gauge__val">$53k</div>
+          </div>
+        </div>
+        <div class="ios-gaugeWrap" aria-label="Stop Buying (fallback)">
+          <div class="ios-gauge">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="32" cy="32" r="29" stroke="rgba(15,23,42,0.12)" stroke-width="6" fill="none"></circle>
+              <circle cx="32" cy="32" r="29" stroke="rgba(255,190,90,0.92)" stroke-width="6" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
+            </svg>
+            <div class="ios-gauge__val">30</div>
+          </div>
+        </div>
+      </div>
+      <div class="ios-row ios-row--widgets ios-row--5" id="iosWidgetsOperational">
+        <button class="board-col board-col--neutral js-board-col" data-col="acquire_now">
+          <div class="board-col__label">ACQUIRE NOW</div>
+          <div class="board-col__value js-acquireNowValue">8</div>
+          <div class="acq-rows" aria-label="Acquire Now tile details">
+  <div class="acq-row">
+    <div class="acq-ico">⏳</div>
+    <div class="acq-label">Window</div>
+    <div class="acq-value"><strong id="acqTileWindowAmt">$1,300</strong> <span id="acqTileWindowTxt">at risk</span></div>
+  </div>
+  <div class="acq-row">
+    <div class="acq-ico">💡</div>
+    <div class="acq-label">Insight</div>
+    <div class="acq-value" id="acqTileInsight">7 demand matches</div>
+  </div>
+  <div class="acq-row">
+    <div class="acq-ico">🛡️</div>
+    <div class="acq-label">Why</div>
+    <div class="acq-value" id="acqTileWhy">Delay erodes pricing</div>
+  </div>
+</div>
+        </button>
+
+        <button class="board-col board-col--neutral js-board-col" data-col="internal_supply">
+          <div class="board-col__label">INTERNAL SUPPLY</div>
+          <div class="board-col__value js-internalSupplyValue">21</div>
+          <div class="board-col__coi" id="coiMicro-internal_supply">5 internal matches aging</div>
+          <div class="ios-widget__meta">
+            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v js-internal_supply-insight">5 matches inside your store</span></div>
+            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v js-internal_supply-why">Internal sourcing is fastest gross</span></div>
+          </div>
+        </button>
+
+        <button class="board-col board-col--neutral js-board-col" data-col="external">
+          <div class="board-col__label">EXTERNAL</div>
+          <div class="board-col__value js-externalValue">5</div>
+          <div class="board-col__coi" id="coiMicro-external">Sources tagged (Partner/Buy Bid/Auction)</div>
+          <div class="ios-widget__meta">
+            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v js-external-insight">Partner feed surfaced 5 matches</span></div>
+            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v js-external-why">Best fits outside your inventory</span></div>
+          </div>
+        </button>
+
+        <button class="board-col board-col--neutral js-board-col" data-col="capital_risk">
+          <div class="board-col__label">CAPITAL AT RISK</div>
+          <div class="board-col__value js-capitalRiskValue">$53k</div>
+          <div class="board-col__coi" id="coiMicro-capital_risk">2 units driving risk</div>
+          <div class="ios-widget__meta">
+            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v js-capital_risk-insight">2 units driving the risk total</span></div>
+            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v js-capital_risk-why">Aging drains gross quietly</span></div>
+          </div>
+        </button>
+
+        <button class="board-col board-col--neutral js-board-col" data-col="stop_buying">
+          <div class="board-col__label">STOP BUYING</div>
+          <div class="board-col__value js-stopBuyingValue">30</div>
+          <div class="board-col__coi" id="coiMicro-stop_buying">Overstock pressure rising</div>
+          <div class="ios-widget__meta">
+            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v js-stop_buying-insight">Overstock building in 2 segments</span></div>
+            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v js-stop_buying-why">Stop stacking the same risk</span></div>
+          </div>
+        </button>
+      </div>
+
+      <!-- Today’s Focus (3) -->
+      <!-- Fallback gauges are rendered in HTML so the circles never disappear if JS fails to run. -->
+      <div class="ios-row ios-row--gauges ios-row--3" id="iosGaugesFocus">
+        <div class="ios-gaugeWrap" aria-label="Approaching Escalation (fallback)">
+          <div class="ios-gauge ios-gauge--lg">
+            <svg viewBox="0 0 88 88" aria-hidden="true">
+              <circle cx="44" cy="44" r="40" stroke="rgba(15,23,42,0.12)" stroke-width="8" fill="none"></circle>
+              <circle cx="44" cy="44" r="40" stroke="rgba(15,23,42,0.55)" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
+            </svg>
+            <div class="ios-gauge__val">$0</div>
+          </div>
+        </div>
+        <div class="ios-gaugeWrap" aria-label="Cost of Inaction (fallback)">
+          <div class="ios-gauge ios-gauge--lg">
+            <svg viewBox="0 0 88 88" aria-hidden="true">
+              <circle cx="44" cy="44" r="40" stroke="rgba(15,23,42,0.12)" stroke-width="8" fill="none"></circle>
+              <circle cx="44" cy="44" r="40" stroke="rgba(255,190,90,0.92)" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
+            </svg>
+            <div class="ios-gauge__val">$0</div>
+          </div>
+        </div>
+        <div class="ios-gaugeWrap" aria-label="Resolved Today (fallback)">
+          <div class="ios-gauge ios-gauge--lg">
+            <svg viewBox="0 0 88 88" aria-hidden="true">
+              <circle cx="44" cy="44" r="40" stroke="rgba(15,23,42,0.12)" stroke-width="8" fill="none"></circle>
+              <circle cx="44" cy="44" r="40" stroke="rgba(15,23,42,0.55)" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
+            </svg>
+            <div class="ios-gauge__val">$0</div>
+          </div>
+        </div>
+      </div>
+      <div class="ios-row ios-row--widgets ios-row--3" id="iosWidgetsFocus">
+        <button class="board-col board-col--neutral js-focus-widget" data-focus="approaching_escalation">
+          <div class="board-col__label">APPROACHING ESCALATION</div>
+          <div class="board-col__value">$0</div>
+          <div class="board-col__count">Count: <span class="js-focusCount-approaching">0</span></div>
+          <div class="ios-widget__meta">
+            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v">Silence window closing</span></div>
+            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v">Unacknowledged items escalate</span></div>
+          </div>
+        </button>
+
+        <button class="board-col board-col--neutral js-focus-widget" data-focus="cost_inaction">
+          <div class="board-col__label">COST OF INACTION</div>
+          <div class="board-col__value">$8,100</div>
+          <div class="ios-widget__meta">
+            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v">High-value opportunities aging silently</span></div>
+            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v">Unaddressed decisions disappear</span></div>
+          </div>
+        </button>
+
+        <button class="board-col board-col--neutral js-focus-widget" data-focus="resolved_today">
+          <div class="board-col__label">RESOLVED TODAY</div>
+          <div class="board-col__value">$0</div>
+          <div class="board-col__count">Count: <span class="js-focusCount-resolved">0</span></div>
+          <div class="ios-widget__meta">
+            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v">Opportunities acknowledged and handled</span></div>
+            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v">Handled beats perfect</span></div>
+          </div>
+        </button>
+      </div>
+    </section>
+    <!-- /iOS-style Command Center (FIX8d) -->
+    
   <div class="app">
 
     <header class="topbar">
@@ -83,7 +273,7 @@
       </div>
 
       <div class="board__center" aria-label="Selected Tile Details">
-<section class="drawer js-drawer" data-open="true" aria-label="Decision Detail">
+<section class="drawer js-drawer" data-open="false" aria-label="Decision Detail">
   <div class="drawer__header">
     <div class="drawer__headLeft">
       <div class="drawer__title js-drawerTitle">Select a column</div>
@@ -94,6 +284,7 @@
       <div class="chip js-reconChip" hidden title="Based on close-rate &amp; gross realism (store average).">
         Recon Reality <span class="chip__value js-reconValue">—</span>
       </div>
+      <button class="drawer__close js-drawerClose" type="button" aria-label="Close details">×</button>
       <button class="drawer__collapse js-drawerCollapse" type="button" aria-label="Collapse details">–</button>
     </div>
   </div>
@@ -374,11 +565,15 @@
     
 
     <aside class="dock" data-open="false">
-      <button class="dock__tab js-dockToggle" aria-label="Open Appraisal Assist">
+      <button class="dock__tab js-dockToggle" data-dock="assist" aria-label="Open Appraisal Assist">
         <span class="dock__tabText">Appraisal Assist</span>
       </button>
 
-      <div class="dock__panel" role="region" aria-label="Appraisal Assist Panel">
+      <button class="dock__tab dock__tab--insights js-dockToggle" data-dock="insights" aria-label="Open Insights">
+        <span class="dock__tabText">Insights</span>
+      </button>
+
+      <div class="dock__panel dock__panel--assist" role="region" aria-label="Appraisal Assist Panel">
         <div class="dock__header">
           <div class="dock__title">Appraisal Assist</div>
           <button class="dock__close js-dockClose" aria-label="Close">✕</button>
@@ -494,10 +689,22 @@
           </div>
         </div>
       </div>
-    </aside>
+    
+      <div class="dock__panel dock__panel--insights" role="region" aria-label="Insights Panel">
+        <div class="dock__header">
+          <div class="dock__title">Insights</div>
+          <button class="dock__close js-dockClose" data-dock-close aria-label="Close">✕</button>
+        </div>
+        <div class="dock__body">
+          <div class="dock__hint muted">Top patterns you can’t see in standard reports.</div>
+          <div id="dockInsightsList"></div>
+        </div>
+      </div>
 
-  </div>
+</aside>
 
-  <script src="script.js"></script>
+    
+<script src="script.js"></script>
+  <script src="focus_patch.js"></script>
 </body>
 </html>

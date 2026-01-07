@@ -266,7 +266,7 @@ body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,
   margin-top:16px;background:var(--panel2);border:1px solid var(--line);
   border-radius:var(--radius);box-shadow:var(--shadow2);overflow:hidden;
 }
-.drawer[data-open="false"]{display:none}
+.drawer[data-open="false"]{display:none !important}
 .drawer__header{
   padding:16px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
   border-bottom:1px solid rgba(15,23,42,.08);
@@ -304,12 +304,14 @@ body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,
   padding:12px 10px;cursor:pointer;box-shadow:var(--shadow2);
 }
 .dock__tabText{writing-mode:vertical-rl;text-orientation:mixed;letter-spacing:.12em;font-size:11px;text-transform:uppercase}
+.dock__tab--insights{ top: 300px; }
 .dock__panel{
   pointer-events:all;position:absolute;top:0;right:-440px;width:440px;height:100%;
   background:#ffffff;border-left:1px solid rgba(15,23,42,.10);
   box-shadow:-14px 0 34px rgba(15,23,42,.12);transition:right .18s ease;display:flex;flex-direction:column;
 }
-.dock[data-open="true"] .dock__panel{right:0}
+.dock[data-open="true"][data-active="assist"] .dock__panel--assist{right:0}
+.dock[data-open="true"][data-active="insights"] .dock__panel--insights{right:0}
 .dock__header{
   padding:16px 16px;border-bottom:1px solid rgba(15,23,42,.08);
   display:flex;align-items:center;justify-content:space-between;
@@ -774,7 +776,6 @@ body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,
 
 /* Drawer becomes the right-side detail panel, always visible */
 .drawer{margin-top:0;display:block;flex:1;min-height:0;}
-.drawer[data-open="false"]{display:block}
 .drawer__body{height: calc(100% - 64px); overflow:auto;}
 
 /* Responsive: stack on small screens */
@@ -1104,3 +1105,806 @@ body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,
 
 /* External source badge */
 .src-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:12px;line-height:18px;border:1px solid rgba(255,255,255,0.14);background:rgba(0,0,0,0.22);white-space:nowrap;}
+
+/* =========================
+   iOS Dashboard Theme (FIX8d)
+   ========================= */
+body.theme-ios{
+  background: linear-gradient(180deg, rgba(20,24,30,1) 0%, rgba(12,14,18,1) 100%);
+  color: rgba(255,255,255,0.92);
+}
+
+/* Premium spacing: allow top tiles to breathe on desktop */
+.ios-dashboard{ max-width: 1700px; margin: 18px auto 28px; padding: 0 18px; }
+.ios-header{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom: 14px; }
+.ios-title{ font-weight: 800; letter-spacing: 0.4px; font-size: 22px; }
+.ios-sub{ opacity: 0.75; font-size: 12px; margin-top: 2px; }
+.ios-pill{ display:inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); }
+.ios-dealer{ text-align:right; }
+.ios-dealer__name{ font-weight: 700; font-size: 14px; }
+.ios-dealer__meta{ opacity: 0.7; font-size: 12px; margin-top: 4px; }
+
+/* Slightly larger gutters to match the wider tiles */
+.ios-row{ display:grid; gap: 18px; margin: 12px 0; }
+.ios-row--5{ grid-template-columns: repeat(5, minmax(300px, 1fr)); }
+.ios-row--3{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+
+.ios-gaugeWrap{ display:flex; align-items:center; justify-content:center; }
+.ios-gauge{ width: 64px; height: 64px; position: relative; }
+.ios-gauge--lg{ width: 88px; height: 88px; }
+.ios-gauge svg{ width:100%; height:100%; transform: rotate(-90deg); }
+.ios-gauge__val{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight: 800; font-size: 16px; }
+.ios-gauge--lg .ios-gauge__val{ font-size: 18px; }
+
+/* Widget cards (reskin) */
+.ios-row--widgets .board-col{
+  width:100%;
+  text-align:left;
+  border-radius: 26px;
+  /* slightly larger inner padding for premium readability */
+  padding: 16px 18px 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: radial-gradient(120% 120% at 0% 0%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.06) 45%, rgba(0,0,0,0.10) 100%);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  min-height: 138px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap: 8px;
+}
+#iosWidgetsFocus .board-col{ min-height: 164px; }
+.ios-row--widgets .board-col:hover{ transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,0,0,0.42); }
+.ios-row--widgets .board-col:active{ transform: translateY(1px); box-shadow: 0 8px 18px rgba(0,0,0,0.35); }
+
+.ios-row--widgets .board-col__label{ letter-spacing: 0.6px; font-weight: 800; font-size: 12px; opacity: 0.9; }
+.ios-row--widgets .board-col__value{ font-size: 30px; font-weight: 900; margin-top: 6px; }
+.ios-row--widgets .board-col__coi{ opacity:0.78; font-size: 12px; margin-top: 6px; }
+
+.ios-widget__meta{ margin-top: 8px; display:flex; flex-direction:column; gap: 6px; }
+.ios-k{ opacity:0.65; font-size:12px; }
+.ios-v{ font-size:12px; opacity:0.9; line-height:1.2; }
+
+/* Hide legacy dashboard chrome but keep modals/drawers intact */
+.coi-dashboard{ display:none !important; }
+
+/* Focus list inside drawer */
+.focus-list{ display:flex; flex-direction:column; gap:10px; }
+.focus-row{ padding:10px 12px; border-radius:14px; border:1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.04); }
+.focus-row__l{ font-weight:700; }
+.focus-row__t{ margin-top:6px; font-size:12px; opacity:0.7; }
+
+/* FIX8f: Drawer close button */
+.drawer__close{
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.55);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  margin-right: 8px;
+}
+.drawer__close:hover{ transform: translateY(-1px); }
+.drawer__close:active{ transform: translateY(1px); }
+
+/* FIX8f: iOS widget polish */
+body.theme-ios .ios-row--widgets .board-col{
+  background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(245,246,248,0.92) 55%, rgba(235,236,240,0.98) 100%);
+  border: 1px solid rgba(15,23,42,0.08);
+  box-shadow: 0 18px 38px rgba(15,23,42,0.18), 0 2px 6px rgba(15,23,42,0.10);
+}
+body.theme-ios .ios-row--widgets .board-col__label{
+  color: rgba(15,23,42,0.55);
+  font-weight: 800;
+  letter-spacing: 0.9px;
+}
+body.theme-ios .ios-row--widgets .board-col__value{
+  color: rgba(15,23,42,0.95);
+  font-size: 34px;
+  letter-spacing: -0.6px;
+  margin-top: 8px;
+}
+body.theme-ios .ios-row--widgets .board-col__coi,
+body.theme-ios .ios-k,
+body.theme-ios .ios-v{
+  color: rgba(15,23,42,0.70);
+}
+body.theme-ios .ios-v{ color: rgba(15,23,42,0.82); }
+body.theme-ios .ios-widget__meta{ margin-top: 10px; gap: 8px; }
+body.theme-ios .ios-dashboard{ background: rgba(255,255,255,0.55); border-radius: 28px; padding: 18px 18px 10px; }
+body.theme-ios .ios-header{ padding-bottom: 12px; border-bottom: 1px solid rgba(15,23,42,0.08); margin-bottom: 18px; }
+
+/* FIX8f: hide legacy header/footer bars */
+.topbar, .statusbar, .footerbar, .bottombar, .board__footer, .board__topbar { display:none !important; }
+
+/* FIX8g: Hide legacy nav/tiles but keep drawer functional */
+.board__nav, .board__frame, .board__frame--vertical{ display:none !important; }
+.drawer{ position: fixed; right: 18px; top: 92px; width: min(520px, calc(100vw - 36px)); max-height: calc(100vh - 120px); z-index: 6000; }
+.drawer__body{ max-height: calc(100vh - 210px); overflow:auto; }
+
+/* FIX8o hide legacy panels: keep ONLY iOS dashboard visible on login */
+.cie, .cie__card, .approachPanel, .coiDash{ display:none !important; }
+
+/* FIX8o focus list styling */
+.focus-list{ display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+.focus-row{ padding:10px 12px; border-radius:14px; border:1px solid rgba(0,0,0,0.08); background: rgba(255,255,255,0.72); }
+.focus-row__l{ font-weight:700; }
+.focus-row__t{ margin-top:6px; font-size:12px; opacity:0.72; }
+.focus-empty{ padding:10px 12px; opacity:0.65; }
+
+/* FIX8p focus column alignment: ensure focus gauges align perfectly with focus widgets */
+#iosGaugesFocus, #iosWidgetsFocus{
+  width: 100%;
+  align-items: stretch;
+}
+#iosGaugesFocus .ios-gaugeWrap{
+  width: 100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+/* Normalize any stray padding/margins that can shift the focus rows */
+#iosGaugesFocus, #iosWidgetsFocus{ margin-left:0; margin-right:0; padding-left:0; padding-right:0; }
+/* Keep grid tracks identical */
+.ios-row.ios-row--3{ grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 14px; }
+
+/* FIX8q shared modal typography */
+.x-head{ padding: 10px 4px 14px; border-bottom: 1px solid rgba(0,0,0,.06); }
+.x-head__row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.x-title{ margin:0; font-size:18px; letter-spacing:-0.2px; }
+.x-pill{ font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid rgba(0,0,0,.12); background: rgba(0,0,0,.04); }
+.x-hero{ margin-top:10px; }
+.x-hero__value{ font-size:34px; font-weight:800; letter-spacing:-0.6px; line-height:1; }
+.x-hero__label{ margin-top:4px; font-size:12px; opacity:.7; }
+.x-sub{ margin-top:8px; font-size:12px; opacity:.75; }
+.x-insight{ padding:14px 4px; }
+.x-copy{ margin:0 0 12px; font-size:13px; line-height:1.35; opacity:.92; }
+.x-stats{ display:flex; gap:10px; flex-wrap:wrap; }
+.x-stat{ flex:1; min-width:160px; padding:10px 12px; border-radius:14px; border:1px solid rgba(0,0,0,.06); background: rgba(0,0,0,.02); }
+.x-k{ font-size:11px; opacity:.65; }
+.x-v{ margin-top:4px; font-weight:700; letter-spacing:-0.2px; }
+.x-list{ display:flex; flex-direction:column; gap:12px; padding: 6px 4px 10px; }
+.x-card{ border:1px solid rgba(0,0,0,.08); border-radius:18px; padding:12px; background:#fff; }
+.x-card__top{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.x-name{ font-weight:750; letter-spacing:-0.2px; }
+.x-impact{ margin-top:6px; font-weight:800; font-size:14px; }
+.x-meta{ font-size:12px; opacity:.78; }
+.x-metaLine{ margin-top:4px; display:flex; gap:6px; align-items:center; }
+.x-ico{ width:16px; display:inline-flex; justify-content:center; }
+.x-owner--none{ opacity:.7; font-style:italic; }
+.x-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; }
+@media (max-width: 760px){ .x-grid{ grid-template-columns: 1fr; } }
+.x-h{ font-size:11px; opacity:.7; text-transform:uppercase; letter-spacing:0.8px; }
+.x-bul{ margin:8px 0 0; padding-left:18px; font-size:12px; opacity:.9; }
+.x-help{ margin-top:10px; font-size:12px; opacity:.7; }
+.x-actions{ margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.x-btn{ padding:10px 12px; border-radius:12px; border:1px solid rgba(0,0,0,.12); background:#fff; font-weight:650; cursor:pointer; }
+.x-btn:disabled,.x-select:disabled{ opacity:.6; cursor:default; }
+.x-btn--primary{ background: rgba(0,0,0,.88); color:#fff; border-color: rgba(0,0,0,.88); }
+.x-btn--danger{ border-color: rgba(220,38,38,.35); color: rgba(153,27,27,1); background: rgba(220,38,38,.06); }
+.x-btn--warn{ border-color: rgba(245,158,11,.35); color: rgba(146,64,14,1); background: rgba(245,158,11,.08); }
+.x-select{ padding:10px 10px; border-radius:12px; border:1px solid rgba(0,0,0,.12); background:#fff; font-weight:600; }
+.x-defer{ display:flex; gap:8px; align-items:center; }
+.x-memory{ margin-top:6px; padding: 12px 4px; border-top:1px solid rgba(0,0,0,.06); }
+.x-memory__h{ font-size:11px; opacity:.7; text-transform:uppercase; letter-spacing:0.8px; }
+.x-foot{ padding: 10px 4px 2px; }
+.x-foot__note{ font-size:12px; opacity:.7; }
+.x-muted{ opacity:.5; }
+
+/* FIX8t iOS color + depth (tasteful, iOS-clean) */
+:root{
+  --bg0: #f6f7fb;
+  --bg1: #eef1f7;
+  --card: rgba(255,255,255,.78);
+  --cardStroke: rgba(0,0,0,.08);
+  --shadow1: 0 10px 30px rgba(0,0,0,.06);
+  --shadow2: 0 2px 10px rgba(0,0,0,.06);
+  --textDim: rgba(0,0,0,.62);
+  --pill: rgba(0,0,0,.06);
+
+  /* Accent palette */
+  --blue: #2f6bff;
+  --purple: #7a5cff;
+  --teal: #13b6c9;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --pink: #ec4899;
+  --slate: #64748b;
+}
+
+/* Page background */
+body{
+  background:
+    radial-gradient(900px 500px at 15% 0%, rgba(47,107,255,.14), rgba(47,107,255,0) 55%),
+    radial-gradient(700px 420px at 85% 8%, rgba(122,92,255,.12), rgba(122,92,255,0) 55%),
+    radial-gradient(800px 520px at 60% 95%, rgba(19,182,201,.10), rgba(19,182,201,0) 55%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+  color: rgba(0,0,0,.92);
+}
+
+/* Subtle separation between header and dashboard area */
+.header, .topbar, .appHeader, header{
+  backdrop-filter: blur(10px);
+}
+
+/* iOS card surface */
+.ios-widget,
+.ios-card,
+.widget,
+.card,
+.tile,
+.x-card,
+.coi-card,
+.ae-card,
+.rt-card{
+  background: var(--card);
+  border: 1px solid var(--cardStroke);
+  box-shadow: var(--shadow2);
+  backdrop-filter: blur(10px);
+}
+
+/* Widget depth & gradient sheen */
+.ios-widget{
+  position: relative;
+  overflow: hidden;
+}
+.ios-widget::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  background: linear-gradient(135deg, rgba(255,255,255,.65), rgba(255,255,255,0) 55%);
+  pointer-events:none;
+  opacity:.55;
+}
+.ios-widget::after{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  background: radial-gradient(220px 160px at 20% 15%, rgba(255,255,255,.55), rgba(255,255,255,0) 60%);
+  pointer-events:none;
+  opacity:.35;
+}
+
+/* Text hierarchy */
+.small, .muted, .subtle, .x-sub, .coi-sub, .ae-sub, .rt-sub, .x-k, .coi-stat__k, .ae-stat__k, .rt-stat__k{
+  color: var(--textDim) !important;
+}
+.x-pill, .coi-badge, .ae-badge, .rt-badge{
+  background: var(--pill) !important;
+  border-color: rgba(0,0,0,.12) !important;
+}
+
+/* Accent chips on widgets based on data-focus / data-key / id (non-invasive) */
+#iosWidgetsTop .ios-widget,
+#iosWidgetsFocus .ios-widget{
+  border-radius: 18px;
+}
+
+#iosWidgetsTop .ios-widget[data-key="acquire_now"],
+#iosWidgetsTop .ios-widget[data-tile="acquire_now"]{
+  border-color: rgba(47,107,255,.25);
+}
+#iosWidgetsTop .ios-widget[data-key="internal_supply"],
+#iosWidgetsTop .ios-widget[data-tile="internal_supply"]{
+  border-color: rgba(19,182,201,.25);
+}
+#iosWidgetsTop .ios-widget[data-key="external"],
+#iosWidgetsTop .ios-widget[data-tile="external"]{
+  border-color: rgba(122,92,255,.25);
+}
+#iosWidgetsTop .ios-widget[data-key="capital_at_risk"],
+#iosWidgetsTop .ios-widget[data-tile="capital_at_risk"]{
+  border-color: rgba(245,158,11,.30);
+}
+#iosWidgetsTop .ios-widget[data-key="stop_buying"],
+#iosWidgetsTop .ios-widget[data-tile="stop_buying"]{
+  border-color: rgba(239,68,68,.28);
+}
+
+/* Focus widgets: more emphasis */
+#iosWidgetsFocus .ios-widget{
+  box-shadow: var(--shadow1);
+}
+#iosWidgetsFocus .ios-widget[data-focus="approaching_escalation"]{
+  border-color: rgba(245,158,11,.35);
+}
+#iosWidgetsFocus .ios-widget[data-focus="cost_inaction"]{
+  border-color: rgba(239,68,68,.35);
+}
+#iosWidgetsFocus .ios-widget[data-focus="resolved_today"]{
+  border-color: rgba(34,197,94,.35);
+}
+
+/* Slightly richer gauge rings (no markup changes) */
+.ios-gauge, .gauge, .ring{
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,.10));
+}
+
+/* Drawer surface */
+.drawer, .js-drawer{
+  background: rgba(255,255,255,.86);
+  border-left: 1px solid rgba(0,0,0,.10);
+  box-shadow: -12px 0 40px rgba(0,0,0,.10);
+  backdrop-filter: blur(16px);
+}
+
+/* Buttons: keep clean, add depth */
+button, .x-btn, .coi-btn, .ae-btn, .rt-btn{
+  box-shadow: 0 1px 0 rgba(0,0,0,.05);
+}
+.x-btn--primary, .coi-btn--primary, .ae-btn--primary{
+  background: rgba(0,0,0,.88) !important;
+}
+
+/* FIX8u: Align top 5 widgets number baselines */
+#iosWidgetsTop{
+  align-items: stretch;
+}
+#iosWidgetsTop .ios-widget{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#iosWidgetsTop .ios-widget .widget-metric,
+#iosWidgetsTop .ios-widget .big-number,
+#iosWidgetsTop .ios-widget .metric{
+  margin-top: 6px;
+  line-height: 1.05;
+}
+#iosWidgetsTop .ios-widget .widget-footer,
+#iosWidgetsTop .ios-widget .widget-sub,
+#iosWidgetsTop .ios-widget .why,
+#iosWidgetsTop .ios-widget .insight{
+  margin-top: auto;
+}
+
+/* FIX8v: Apple font + strict baseline alignment for top 5 operational widgets */
+:root{
+  --sf: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Arial, sans-serif;
+}
+html, body{
+  font-family: var(--sf) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/* tighten overall typography */
+body{ letter-spacing: -0.01em; }
+.board-col__label, .x-title, .coi-title, .ae-title, .rt-title{
+  letter-spacing: -0.02em;
+}
+
+/* STRICT internal grid for the top 5 cards */
+#iosWidgetsOperational .board-col{
+  display: grid;
+  grid-template-rows: 24px 58px 24px 1fr;
+  align-content: start;
+  text-align: left;
+}
+#iosWidgetsOperational .board-col__label{
+  height:24px;
+  display:flex;
+  align-items:flex-end;
+  font-size: 13px;
+  font-weight: 700;
+  opacity: .65;
+}
+#iosWidgetsOperational .board-col__value{
+  height:58px;
+  display:flex;
+  align-items:flex-end; /* baseline-ish */
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  padding-bottom: 2px; /* optical baseline lock */
+}
+/* Option A: smaller currency symbol (Apple-like) */
+#iosWidgetsOperational .board-col__value.is-currency::first-letter{
+  font-size: .72em;
+  position: relative;
+  top: -0.08em;
+  margin-right: 1px;
+}
+/* only apply the first-letter tweak when it is a $ (avoid scaling digits) */
+/* COI micro line fixed height */
+#iosWidgetsOperational .board-col__coi{
+  height:24px;
+  display:flex;
+  align-items:flex-start;
+  font-size: 13px;
+  color: rgba(0,0,0,.55);
+}
+
+/* Meta block locks to bottom with consistent spacing */
+#iosWidgetsOperational .ios-widget__meta{
+  align-self: end;
+  display: grid;
+  row-gap: 8px;
+  padding-top: 8px;
+}
+#iosWidgetsOperational .ios-widget__insight,
+#iosWidgetsOperational .ios-widget__why{
+  font-size: 14px;
+  line-height: 1.25;
+}
+#iosWidgetsOperational .ios-k{
+  font-weight: 600;
+  color: rgba(0,0,0,.58);
+}
+
+/* FIX8w: Slightly smaller, optically centered metrics for all 8 widgets */
+
+/* Top 5 widgets */
+#iosWidgetsOperational .board-col__value{
+  font-size: 38px;          /* reduced from 44px */
+  justify-content: center;  /* horizontal centering */
+  align-items: center;      /* vertical centering */
+  padding-bottom: 0;        /* remove baseline bias */
+  text-align: center;
+}
+
+/* Currency symbol stays Apple-small */
+#iosWidgetsOperational .board-col__value.is-currency::first-letter{
+  font-size: .7em;
+  top: -0.06em;
+}
+
+/* Bottom 3 focus widgets */
+#iosWidgetsFocus .board-col__value,
+#iosWidgetsFocus .focus-metric,
+#iosWidgetsFocus .widget-metric{
+  font-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  text-align: center;
+}
+
+/* Gauge numbers (circles) */
+.ios-gauge__value,
+.gauge-value,
+.ring-value{
+  font-size: 26px;   /* slightly smaller */
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* FIX10b: card stack */
+.x-stack{display:grid; gap:12px;}
+
+/* FIX10c scroll lock + better drawer scrolling */
+body.drawer-open, html.drawer-open { overflow: hidden; }
+.drawer__body { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding-bottom: 28px; }
+.js-cardWrap { padding-bottom: 28px; }
+
+
+/* FIX10d: Prevent main dashboard page scrolling + ensure drawer content can fully scroll */
+html, body { height: 100%; overflow: hidden; }
+body.oa { display: flex; flex-direction: column; }
+
+/* Topbar stays fixed height, main fills remaining viewport */
+.topbar { flex: 0 0 auto; }
+.main { flex: 1 1 auto; overflow: hidden; padding-bottom: 0 !important; }
+
+/* Board fills available space */
+.board { height: 100%; overflow: hidden; }
+.board__grid { height: 100%; }
+.board__grid--3 { height: 100%; }
+
+/* Drawer panel must scroll internally without clipping */
+.drawer { max-height: calc(100vh - 110px) !important; }
+.drawer__body { max-height: calc(100vh - 210px) !important; overflow: auto !important; min-height: 0; padding-bottom: 42px !important; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.js-cardWrap { padding-bottom: 42px !important; }
+
+/* FIX10j Acquire Now inline */
+.x-badge{
+  display:inline-flex; align-items:center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.10);
+  background: rgba(0,0,0,.06);
+  font-size: 12px;
+  color: rgba(0,0,0,.72);
+  margin-right: 6px;
+}
+.x-more{ margin-top: 10px; border-top: 1px solid rgba(0,0,0,.08); padding-top: 10px; }
+.x-more summary{
+  cursor:pointer;
+  color: rgba(0,0,0,.70);
+  font-weight: 600;
+  list-style: none;
+}
+.x-more summary::-webkit-details-marker{ display:none; }
+.x-more__body{ margin-top: 10px; display: grid; gap: 14px; }
+
+/* FIX10k Acquire pills */
+.x-badge{
+  padding: 3px 8px;
+  font-size: 11px;
+  line-height: 1.2;
+  border-radius: 999px;
+  margin-right: 6px;
+  border: 1px solid rgba(0,0,0,.10);
+  background: rgba(0,0,0,.05);
+  color: rgba(0,0,0,.70);
+  white-space: nowrap;
+}
+.x-badge--best{
+  background: rgba(0,0,0,.10);
+  border-color: rgba(0,0,0,.18);
+  color: rgba(0,0,0,.82);
+}
+/* Better spacing in meta lines */
+.x-metaLine{ line-height: 1.35; }
+.x-sub{ font-size: 12px; color: rgba(0,0,0,.62); margin-top: 4px; }
+.x-matchlist{ margin-top: 10px; display: grid; gap: 10px; }
+.x-match{
+  border: 1px solid rgba(0,0,0,.08);
+  background: rgba(0,0,0,.03);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.x-match__title{ font-weight: 600; color: rgba(0,0,0,.85); }
+.x-match__meta{ margin-top: 4px; font-size: 12px; color: rgba(0,0,0,.68); }
+
+/* FIX10l2: drawer width + no horizontal scroll */
+.drawer{ width: min(980px, calc(100vw - 24px)); }
+.drawer__panel{ max-width: min(980px, calc(100vw - 24px)); }
+.drawer__body{ overflow-x:hidden !important; }
+.x-card, .x-stack, .focus-list{ overflow-x:hidden; }
+.x-card__top > div{ min-width: 0; }
+
+/* FIX10l2: focus rows alignment */
+.focus-list{ display:grid; gap: 12px; }
+.fo-row{ display:grid; grid-template-columns: 1fr 220px; gap: 14px; border:1px solid rgba(0,0,0,.08); background: rgba(255,255,255,.9); border-radius: 14px; padding: 12px 14px; }
+.fo-row__r{ display:grid; gap: 8px; justify-items:end; align-content:start; }
+.fo-actions{ display:flex; gap: 8px; justify-content:flex-end; flex-wrap: wrap; }
+@media (max-width: 860px){ .fo-row{ grid-template-columns: 1fr; } .fo-row__r{ justify-items:start; } .fo-actions{ justify-content:flex-start; } }
+
+/* FIX10r: focus boxes show $ with count line */
+.board-col__count{
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(0,0,0,.60);
+  letter-spacing: .02em;
+}
+
+
+/* Debug-only: economic state pills (hidden unless ?debug=1) */
+.econ-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  padding:.1rem .45rem;
+  border-radius:999px;
+  font-size:11px;
+  line-height:1.2;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(0,0,0,.18);
+  color:rgba(255,255,255,.9);
+  letter-spacing:.02em;
+}
+.econ-pill__dot{
+  width:6px;height:6px;border-radius:999px;
+  background:rgba(255,255,255,.85);
+}
+body:not(.debug-econ) .econ-pill{ display:none; }
+
+/* Preview-only UI (shown only when body has .debug-econ) */
+.oa-preview-banner{
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 9999;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(0,0,0,.08);
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  font-family: inherit;
+}
+.oa-preview-banner__left{ display:flex; align-items:center; gap:10px; min-width: 0; }
+.oa-preview-badge{
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.02em;
+  padding:4px 8px;
+  border-radius:999px;
+  background: rgba(0,0,0,.06);
+  white-space: nowrap;
+}
+.oa-preview-title{
+  font-size:13px;
+  font-weight:600;
+  opacity:.85;
+  overflow:hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.oa-preview-toggle{
+  appearance:none;
+  border:1px solid rgba(0,0,0,.12);
+  background: rgba(255,255,255,.9);
+  border-radius:10px;
+  padding:6px 10px;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+}
+.oa-preview-toggle:hover{ background: rgba(0,0,0,.04); }
+
+.oa-preview-panel{
+  position: fixed;
+  top: 64px;
+  right: 10px;
+  width: 260px;
+  z-index: 9999;
+  border-radius:16px;
+  border:1px solid rgba(0,0,0,.08);
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  padding:10px 12px;
+}
+.oa-preview-panel__hd{ font-size:12px; font-weight:800; letter-spacing:.02em; }
+.oa-preview-panel__sub{ font-size:11px; opacity:.65; margin-top:2px; }
+.oa-preview-panel__rows{ margin-top:10px; display:flex; flex-direction:column; gap:8px; }
+
+.insights__close{ border: 0; background: rgba(15,23,42,0.06); color: #0f172a; width: 34px; height: 34px; border-radius: 10px; cursor:pointer; }
+.insights__close:hover{ background: rgba(15,23,42,0.10); }
+.insights__list{ padding: 12px 14px 16px; overflow:auto; display:flex; flex-direction:column; gap: 10px; }
+.insightCard{ background: rgba(255,255,255,0.82); border: 1px solid rgba(15,23,42,0.10); border-radius: 16px; padding: 12px; }
+.insightCard__top{ display:flex; align-items:flex-start; justify-content:space-between; gap: 10px; }
+.insightCard__rank{ font-weight: 900; opacity: .55; }
+.insightCard__title{ font-weight: 900; }
+.insightCard__impact{ font-weight: 900; }
+.insightCard__stmt{ margin-top: 6px; font-size: 13px; line-height: 1.35; opacity: .92; }
+.insightCard__meta{ margin-top: 8px; font-size: 11px; opacity: .65; }
+.oa-preview-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.oa-preview-row__k{ font-size:12px; font-weight:700; text-transform: capitalize; }
+.oa-preview-row__v{ font-size:12px; font-weight:800; }
+
+/* Keep the banner/panel invisible unless in debug mode */
+body:not(.debug-econ) .oa-preview-banner,
+body:not(.debug-econ) .oa-preview-panel{ display:none; }
+
+
+/* Acquire Now tile detail rows */
+.tileRows{margin-top:8px;display:flex;flex-direction:column;gap:6px;}
+.tileRow{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;line-height:1.2;}
+.tileRow__label{opacity:.85;white-space:nowrap;}
+.tileRow__val{flex:1;min-width:0;text-align:right;font-weight:600;}
+.tileRow__muted{opacity:.7;font-weight:500;margin-left:6px;}
+.tileRow__val--nowrap{white-space:nowrap;}
+/* Remove active underline selector */
+.board-col.is-active::after{display:none !important;}
+
+/* Hide internal toggle tabs in Acquire Now drawer */
+.drawer[data-col="acquire_now"] .js-internalToggle{display:none !important;}
+
+
+
+/* === Acquire Now tile: flat premium rows (FIX38) === */
+.board-col[data-col="acquire_now"] .acq-rows{
+  /* tighter vertical rhythm + more breathing room at bottom */
+  margin-top: 10px;
+  display: grid;
+  gap: 9px;
+  margin-bottom: 4px;
+}
+
+.board-col[data-col="acquire_now"] .acq-row{
+  display: grid;
+  /* Match the approved flat-row mock: icon | label | value */
+  grid-template-columns: 18px 72px 1fr;
+  align-items: baseline;
+  column-gap: 10px;
+}
+
+.board-col[data-col="acquire_now"] .acq-ico{
+  width: 18px;
+  text-align: center;
+  font-size: 14px;
+  opacity: .9;
+  transform: translateY(1px);
+}
+
+.board-col[data-col="acquire_now"] .acq-label{
+  color: rgba(18, 25, 42, .62);
+  font-size: 11px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.board-col[data-col="acquire_now"] .acq-value{
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.board-col[data-col="acquire_now"] .acq-value strong{
+  font-weight: 900;
+}
+
+/* Acquire Now tile: spacing-only overrides so the rows don't hug the bottom */
+#iosWidgetsOperational .board-col[data-col="acquire_now"]{
+  /* keep the locked width; just improve interior rhythm */
+  padding-bottom: 18px;
+  justify-content: flex-start;
+}
+
+#iosWidgetsOperational .board-col[data-col="acquire_now"] .board-col__value{
+  margin-bottom: 2px;
+}
+
+
+
+/* === FIX: Fully center tile content (premium) === */
+.board-col{
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.board-col__micro{
+  justify-content:center;
+}
+
+/* Acquire Now – fully centered flat rows (match mock) */
+.board-col[data-col="acquire_now"] .acq-rows{
+  margin-top:16px;
+  width:100%;
+  max-width:260px;
+  display:grid;
+  gap:10px;
+}
+.board-col[data-col="acquire_now"] .acq-row{
+  display:grid;
+  grid-template-columns:18px auto auto;
+  justify-content:center;
+  align-items:baseline;
+  column-gap:10px;
+  width:fit-content;
+  margin:0 auto;
+}
+.board-col[data-col="acquire_now"] .acq-ico{
+  width:18px;
+  text-align:center;
+  font-size:14px;
+  opacity:.92;
+  transform:translateY(1px);
+}
+.board-col[data-col="acquire_now"] .acq-label{
+  font-size:11px;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  font-weight:900;
+  color:rgba(18,25,42,.6);
+  white-space:nowrap;
+}
+.board-col[data-col="acquire_now"] .acq-value{
+  font-size:13px;
+  font-weight:750;
+  letter-spacing:-.01em;
+  white-space:nowrap;
+  text-align:center;
+}
+.board-col[data-col="acquire_now"] .acq-value strong{font-weight:950;}
+

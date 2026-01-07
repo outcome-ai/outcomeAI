@@ -261,7 +261,7 @@ details: {
         columns: ["#", "Profile", "Why it works", "Match"],
         rows: [
           ["1", "2022 F-250 XLT Tremor (Gas)", "Trim premium holds + fast exits", "3"],
-          ["2", "2021 Ford F-150 XLT 302A", "Repeatable front gross here", "2"],
+          ["2", "2021 F-150 XLT 302A", "Repeatable front gross here", "2"],
           ["3", "2022 Expedition XLT", "Low friction exits", "1"],
           ["4", "2021 Tahoe RST", "Buyer pull-through", "2"],
           ["5", "2022 4Runner SR5", "Stable recon + strong demand", "1"],
@@ -311,44 +311,29 @@ details: {
           ["2022 4Runner SR5", "<span class='src-badge' data-tip='Partner inventory via opt-in feed.'>Partner Dealer Network</span>", "Fastest path to a clean unit"],
           ["2021 Tahoe RST", "<span class='src-badge' data-tip='Upcoming auction listing (feed).'>Auction Feed</span>", "Only if within max buy"],
           ["2022 F-250 XLT Tremor", "<span class='src-badge' data-tip='Dealer-to-dealer listing (Buy Bid network).'>Buy Bid Network</span>", "Trim premium holds"],
-          ["2021 Ford F-150 XLT 302A", "<span class='src-badge' data-tip='Direct purchase source you configured.'>Direct Purchase</span>", "Repeatable gross pattern"],
+          ["2021 F-150 XLT 302A", "<span class='src-badge' data-tip='Direct purchase source you configured.'>Direct Purchase</span>", "Repeatable gross pattern"],
           ["2020 Wrangler Rubicon", "<span class='src-badge' data-tip='Partner inventory via opt-in feed.'>Partner Dealer Network</span>", "Trim premium holds"],
         ]
       }
     },
-    
-acquireMatches: {
-  "2022 Ford F-250 XLT Tremor (Gas)": [
-    { where: "Service", vehicle: "2022 Ford F-250 XLT Tremor • VIN …3195", customer: "B. Fox", when: "Appt 10:30" },
-    { where: "Service", vehicle: "2022 Ford F-250 XLT Tremor • VIN …6420", customer: "R. Myers", when: "Appt 1:20" },
-    { where: "Appraisal", vehicle: "2022 Ford F-250 XLT Tremor • VIN …3195", customer: "B. Fox", when: "Active" }
-  ],
-  "2021 Ford F-150 XLT 302A": [
-    { where: "Service", vehicle: "2021 Ford F-150 XLT 302A • VIN …1188", customer: "T. Nguyen", when: "Appt 3:40" },
-    { where: "Appraisal", vehicle: "2021 Ford F-150 XLT 302A • VIN …1188", customer: "T. Nguyen", when: "Active" }
-  ],
-  "2022 Ford Expedition XLT": [
-    { where: "Service", vehicle: "2022 Ford Expedition XLT • VIN …6114", customer: "A. Patel", when: "Appt 9:10" }
-  ],
-  "2021 Chevrolet Tahoe RST": [
-    { where: "Service", vehicle: "2021 Chevrolet Tahoe RST • VIN …7721", customer: "J. Carter", when: "RO Open" },
-    { where: "Appraisal", vehicle: "2021 Chevrolet Tahoe RST • VIN …7721", customer: "J. Carter", when: "Active" }
-  ],
-  "2022 Toyota 4Runner SR5": [
-    { where: "Service", vehicle: "2022 Toyota 4Runner SR5 • VIN …9002", customer: "S. Hall", when: "RO Open" }
-  ],
-  "2021 GMC Sierra SLT": [
-    { where: "Service", vehicle: "2021 GMC Sierra SLT • VIN …2219", customer: "K. Reed", when: "RO Open" }
-  ],
-  "2020 Jeep Wrangler Rubicon": [
-    { where: "Service", vehicle: "2020 Jeep Wrangler Rubicon • VIN …4430", customer: "M. Diaz", when: "RO Open" },
-    { where: "Appraisal", vehicle: "2020 Jeep Wrangler Rubicon • VIN …4430", customer: "M. Diaz", when: "Pending" }
-  ],
-  "2023 Ford Bronco Sport Outer Banks": []
-},
+    acquireMatches: {
+      "2022 F-250 XLT Tremor (Gas)": [
+        { where: "Service", vehicle: "2022 F-250 XLT Tremor • VIN …3195", customer: "B. Fox", when: "12/30 8:15a" },
+        { where: "Service", vehicle: "2022 F-250 XLT Tremor • VIN …6420", customer: "R. Myers", when: "12/31 1:20p" },
+        { where: "Appraisal", vehicle: "2022 F-250 XLT Tremor • VIN …3195", customer: "B. Fox", when: "Active" }
+      ],
+      "2021 F-150 XLT 302A": [
+        { where: "Service", vehicle: "2021 F-150 XLT 302A • VIN …1188", customer: "T. Nguyen", when: "12/29 3:40p" },
+        { where: "Appraisal", vehicle: "2021 F-150 XLT 302A • VIN …1188", customer: "T. Nguyen", when: "Active" }
+      ],
+      "2021 Tahoe RST": [
+        { where: "Service", vehicle: "2021 Tahoe RST • VIN …7721", customer: "J. Carter", when: "RO Open" },
+        { where: "Appraisal", vehicle: "2021 Tahoe RST • VIN …7721", customer: "J. Carter", when: "Active" }
+      ]
+    },
     acquireMath: {
       "2022 F-250 XLT Tremor (Gas)": { retail: 67995, recon: 1400, targetGross: 3500, pack: 900, confidence: 92 },
-      "2021 Ford F-150 XLT 302A": { retail: 44995, recon: 1200, targetGross: 3000, pack: 900, confidence: 88 },
+      "2021 F-150 XLT 302A": { retail: 44995, recon: 1200, targetGross: 3000, pack: 900, confidence: 88 },
       "2022 Expedition XLT": { retail: 52995, recon: 1600, targetGross: 3200, pack: 900, confidence: 84 },
       "2021 Tahoe RST": { retail: 58995, recon: 2100, targetGross: 3500, pack: 900, confidence: 86 },
       "2022 4Runner SR5": { retail: 38995, recon: 900, targetGross: 3000, pack: 900, confidence: 90 },
@@ -476,26 +461,6 @@ acquireMatches: {
     if (el) el.textContent = val;
   };
 
-  // Normalize Acquire Now counts so tile, circle, and drawer list always align
-  try {
-    const acqCount = (demo?.details?.acquire_now?.rows || []).length;
-    if (demo?.board?.acquire_now) demo.board.acquire_now.value = acqCount;
-
-    // Tile: Window / Insight / Why (Acquire Now)
-    const windowAmt = document.getElementById("acqTileWindowAmt");
-    const windowTxt = document.getElementById("acqTileWindowTxt");
-    const acqInsight = document.getElementById("acqTileInsight");
-    const acqWhy = document.getElementById("acqTileWhy");
-
-    // Window value is currently driven by the COI micro copy; keep the number stable for demo.
-    if (windowAmt) windowAmt.textContent = "$1,300";
-    if (windowTxt) windowTxt.textContent = "at risk";
-
-    if (acqInsight) acqInsight.textContent = `${acqCount} demand matches`;
-    const whyText = (demo?.details?.acquire_now?.why) ? demo.details.acquire_now.why : "Delay erodes pricing";
-    if (acqWhy) acqWhy.textContent = whyText;
-  } catch(e) {}
-
   // Populate board
   setText(".js-stopBuyingValue", String(demo.board.stop_buying.value));
   setText(".js-capitalRiskValue", fmtMoney(demo.board.capital_risk.value));
@@ -539,19 +504,6 @@ acquireMatches: {
   const actCRM = $(".js-actOpenCRM");
 
   const drawerClose = $(".js-drawerClose");
-  // Ensure the X close button always works (no additional dealer tasks)
-  if (drawerClose) {
-    const hardClose = (e) => {
-      try { e.preventDefault(); e.stopPropagation(); } catch(_) {}
-      closeDrawer();
-    };
-    drawerClose.addEventListener("pointerdown", hardClose, true);
-    drawerClose.addEventListener("click", hardClose, true);
-  }
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeDrawer();
-  });
-
 
   let activeCol = null;
   let internalView = "service";
@@ -663,48 +615,54 @@ acquireMatches: {
   function h(s){ return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
   // FIX10j: richer Acquire Now inline details (no 2nd click)
-const acquireWhere = {
-  "2022 Ford F-250 XLT Tremor (Gas)": ["Partner Dealer Network","Buy Bid Network","Auction Feed (only at Max Buy)","Direct Purchase"],
-  "2021 Ford F-150 XLT 302A": ["Direct Purchase","Partner Dealer Network","Auction Feed (only at Max Buy)"],
-  "2022 Ford Expedition XLT": ["Partner Dealer Network","Auction Feed (only at Max Buy)"],
-  "2021 Chevrolet Tahoe RST": ["Partner Dealer Network","Auction Feed (only at Max Buy)"],
-  "2022 Toyota 4Runner SR5": ["Partner Dealer Network","Auction Feed (only at Max Buy)"],
-  "2021 GMC Sierra SLT": ["Partner Dealer Network","Direct Purchase"],
-  "2020 Jeep Wrangler Rubicon": ["Partner Dealer Network","Auction Feed (only at Max Buy)"],
-  "2023 Ford Bronco Sport Outer Banks": ["Partner Dealer Network","Direct Purchase","Auction Feed (only at Max Buy)"]
-};
-
-const acquireBest = {
-  "2022 Ford F-250 XLT Tremor (Gas)": "Direct Purchase",
-  "2021 Ford F-150 XLT 302A": "Direct Purchase",
-  "2022 Ford Expedition XLT": "Partner Dealer Network",
-  "2021 Chevrolet Tahoe RST": "Partner Dealer Network",
-  "2022 Toyota 4Runner SR5": "Partner Dealer Network",
-  "2021 GMC Sierra SLT": "Direct Purchase",
-  "2020 Jeep Wrangler Rubicon": "Partner Dealer Network",
-  "2023 Ford Bronco Sport Outer Banks": "Direct Purchase"
-};
-
-const acquireGuardrails = {
-  "2022 Ford F-250 XLT Tremor (Gas)": { maxBuy:"$58,500", recon:"$1,500", turn:"< 24 days" },
-  "2021 Ford F-150 XLT 302A": { maxBuy:"$42,900", recon:"$1,200", turn:"< 21 days" },
-  "2022 Ford Expedition XLT": { maxBuy:"$48,200", recon:"$1,500", turn:"< 23 days" },
-  "2021 Chevrolet Tahoe RST": { maxBuy:"$46,500", recon:"$1,300", turn:"< 25 days" },
-  "2022 Toyota 4Runner SR5": { maxBuy:"$41,800", recon:"$1,100", turn:"< 24 days" },
-  "2021 GMC Sierra SLT": { maxBuy:"$45,700", recon:"$1,300", turn:"< 23 days" },
-  "2020 Jeep Wrangler Rubicon": { maxBuy:"$44,900", recon:"$1,600", turn:"< 28 days" },
-  "2023 Ford Bronco Sport Outer Banks": { maxBuy:"$34,900", recon:"$1,050", turn:"< 22 days" }
-};
-
+  const acquireWhere = {
+    "2022 F-250 XLT Tremor (Gas)": ["Partner Dealer Network", "Buy Bid Network", "Auction Feed (only at Max Buy)"],
+    "2021 F-150 XLT 302A": ["Direct Purchase", "Partner Dealer Network", "Auction Feed (only at Max Buy)"],
+    "2022 Expedition XLT": ["Partner Dealer Network", "Direct Purchase", "Auction Feed (only at Max Buy)"],
+    "2021 Tahoe RST": ["Partner Dealer Network", "Auction Feed (only at Max Buy)", "Buy Bid Network"],
+    "2022 4Runner SR5": ["Partner Dealer Network", "Buy Bid Network", "Auction Feed (only at Max Buy)"],
+    "2021 Sierra SLT": ["Direct Purchase", "Partner Dealer Network", "Auction Feed (only at Max Buy)"],
+    "2020 Wrangler Rubicon": ["Partner Dealer Network", "Auction Feed (only at Max Buy)", "Buy Bid Network"]
+  };
+  const acquireBest = {
+    "2022 F-250 XLT Tremor (Gas)": "Internal Supply",
+    "2021 F-150 XLT 302A": "Partner Dealer Network",
+    "2022 Expedition XLT": "Partner Dealer Network",
+    "2021 Tahoe RST": "Partner Dealer Network",
+    "2022 4Runner SR5": "Buy Bid Network",
+    "2021 Sierra SLT": "Direct Purchase",
+    "2020 Wrangler Rubicon": "Partner Dealer Network"
+  };
+  const acquireGuardrails = {
+    "2022 F-250 XLT Tremor (Gas)": { maxBuy:"$58,500", recon:"$1,500", turn:"< 24 days" },
+    "2021 F-150 XLT 302A": { maxBuy:"$42,900", recon:"$1,200", turn:"< 21 days" },
+    "2022 Expedition XLT": { maxBuy:"$49,900", recon:"$1,400", turn:"< 26 days" },
+    "2021 Tahoe RST": { maxBuy:"$46,500", recon:"$1,200", turn:"< 21 days" },
+    "2022 4Runner SR5": { maxBuy:"$41,800", recon:"$1,100", turn:"< 24 days" },
+    "2021 Sierra SLT": { maxBuy:"$45,700", recon:"$1,300", turn:"< 23 days" },
+    "2020 Wrangler Rubicon": { maxBuy:"$44,900", recon:"$1,600", turn:"< 28 days" }
+  };
   function badge(label, active){
     const cls = active ? "x-badge x-badge--best" : "x-badge";
     return `<span class="${cls}">${h(label)}</span>`;
   }
+  const acquireInternalMatches = {
+    "2022 F-250 XLT Tremor (Gas)": [
+      { vin:"1FT8W2BT0NEC11234", name:"Service RO: Mark L. (F-250 Tremor) — appt 10:30", next:"Assign to Used Car Manager" },
+      { vin:"1FT8W2BT1NEC22345", name:"Live Appraisal: Trade — 2022 F-250 Tremor (oil change lane)", next:"Push Appraisal Assist" },
+      { vin:"1FT8W2BT2NEC33456", name:"Previously Sold: CRM equity alert — upgrade window", next:"Call today" }
+    ],
+    "2021 Tahoe RST": [
+      { vin:"1GNSKPKD0MR112233", name:"Service RO: Tahoe RST — appt 2:15", next:"Flag to retention desk" },
+      { vin:"1GNSKPKD0MR223344", name:"Live Appraisal: Tahoe RST — web form", next:"Respond within 15 min" }
+    ]
+  };
+
   const stopBuyingBreakpoint = {
     "2020 Wrangler Rubicon": "If buy > $44,900 OR recon > $1,600, margin compresses fast",
     "2021 Tahoe RST": "If buy > $46,500 OR days-to-sell > 28, capital drag spikes",
     "2022 4Runner SR5": "If buy > $41,800, turn slows and gross gets squeezed",
-    "2021 Ford F-150 XLT 302A": "If recon > $1,200, you lose the easy-exit advantage"
+    "2021 F-150 XLT 302A": "If recon > $1,200, you lose the easy-exit advantage"
   };
 
 function sourceBadges(profile){
@@ -730,25 +688,22 @@ function sourceBadges(profile){
   }
 
   function renderTopCards(col, d){
-    try{ if(typeof internalToggle!=='undefined' && internalToggle) internalToggle.hidden = true; }catch(_){ }
-
     // Build a Focus-style summary card list from the existing demo table rows.
-    const rows = (d?.rows || []);
+    const rows = (d?.rows || []).slice(0,7);
 
     if(col === "acquire_now"){
       const cards = rows.map(r=>{
         const profile = r[1] || "Vehicle Profile";
         const why = r[2] || "";
         const match = r[3] || "—";
-        const matches = (demo && demo.acquireMatches && demo.acquireMatches[profile]) ? demo.acquireMatches[profile] : [];
         const g = acquireGuardrails[profile] || { maxBuy:"—", recon:"—", turn:"—" };
 
         const impact = `${h(why)}`;
         const meta = [
-          `<span class="x-ico">🏪</span> Match inside store: <b>${h(String((matches||[]).length))}</b>`,
+          `<span class="x-ico">🏪</span> Match inside store: <b>${h(match)}</b>`,
           `<span class="x-ico">🛰️</span> Where to source: ${sourceBadges(profile)}`,
           `<span class="x-ico">🧾</span> Guardrails: <b>Max Buy ${h(g.maxBuy)}</b> · <b>Recon ${h(g.recon)}</b> · <b>Turn ${h(g.turn)}</b>`,
-          `<span class="x-ico">➡️</span> Next step: <b>Acquire</b> / <b>Pass</b>`
+          `<span class="x-ico">➡️</span> Next step: <b>Assign buyer</b> + request listing links (today)`
         ].filter(Boolean);
 
         const more = `
@@ -767,12 +722,12 @@ function sourceBadges(profile){
                 <div class="x-h">Matches inside your store</div>
                 <div class="x-sub">These are the closest internal paths Outcome found. (You can still source externally if needed.)</div>
                 <div class="x-matchlist">${(() => {
-                  const list = matches || [];
+                  const list = acquireInternalMatches[profile] || [];
                   if(!list.length) return `<div class="x-muted">None detected right now.</div>`;
-                  return list.slice(0,5).map(it => `
+                  return list.slice(0,3).map(it => `
                     <div class="x-match">
-                      <div class="x-match__title">${h(it.where)}: <b>${h(it.customer || '—')}</b> — ${h(it.vehicle || '')}</div>
-                      <div class="x-match__meta"><span class="x-ico">🕒</span> ${h(it.when || '—')}</div>
+                      <div class="x-match__title">${h(it.name)}</div>
+                      <div class="x-match__meta"><span class="x-ico">➡️</span> Next: <b>${h(it.next)}</b></div>
                     </div>
                   `).join("");
                 })()}</div>
@@ -787,7 +742,8 @@ function sourceBadges(profile){
                 </ul>
               </div>
               <div class="x-actions">
-                <button class="x-btn x-btn--primary" data-action="acquired">Acquired</button>
+                <button class="x-btn x-btn--primary" data-action="assign">Mark Assigned</button>
+                <button class="x-btn" data-action="links">Listing Links Requested</button>
                 <button class="x-btn" data-action="pass">Pass</button>
               </div>
             </div>
@@ -1194,7 +1150,7 @@ function setSignals(s) {
         : "Confidence below authorization threshold. Escalation required.";
     }
 
-    if(modalAction) modalAction.textContent = "Next step: Acquire / Pass";
+    if(modalAction) modalAction.textContent = matches.length ? "Call / Text the best match now." : "Source a match inside Max Buy.";
     if(modalActions) modalActions.hidden = maxBuy ? false : true;
 
     modalContext = { vehicle: profile, customer: matches[0]?.customer || null, when: matches[0]?.when || null, where: matches[0]?.where || null , handoff: true};
@@ -2674,7 +2630,7 @@ function getContextExposurePct(){
    ========================= */
 (function(){
   const op = [
-    {id:"op-acquire", val:String((demo?.details?.acquire_now?.rows||[]).length), pct:0.74, level:"high", label:`Acquire Now: ${(demo?.details?.acquire_now?.rows||[]).length}`},
+    {id:"op-acquire", val:"8", pct:0.74, level:"high", label:"Acquire Now: 8"},
     {id:"op-internal", val:"21", pct:0.48, level:"mid", label:"Internal Supply: 21"},
     {id:"op-external", val:"5", pct:0.32, level:"low", label:"External: 5"},
     {id:"op-capital", val:"$53k", pct:0.68, level:"high", label:"Capital at Risk: $53k"},
