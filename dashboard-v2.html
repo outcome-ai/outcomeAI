@@ -1,0 +1,1241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Outcome AI — Dashboard V2 (Static Mock)</title>
+  <style>
+    :root{
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --muted: #6b7280;
+      --muted2:#9aa3b2;
+      --text: #0f172a;
+      --line: #e8ebf2;
+      --shadow: 0 10px 28px rgba(15, 23, 42, .08);
+      --shadow2: 0 18px 45px rgba(15, 23, 42, .10);
+      --radius: 16px;
+      --radius2: 22px;
+
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --indigo:#6366f1;
+      --violet:#8b5cf6;
+
+      --chip: rgba(15, 23, 42, .06);
+      --chip2: rgba(99, 102, 241, .10);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 18% 8%, rgba(99,102,241,.14), transparent 55%),
+        radial-gradient(900px 520px at 84% 18%, rgba(59,130,246,.12), transparent 55%),
+        radial-gradient(900px 520px at 62% 78%, rgba(34,197,94,.08), transparent 55%),
+        var(--bg);
+    }
+
+    /* Layout */
+    .app{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      min-height:100vh;
+    }
+
+    /* Sidebar */
+    .sidebar{
+      padding: 22px 18px;
+      border-right: 1px solid var(--line);
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 8px 10px 18px;
+    }
+    .brandMark{
+      width:34px;height:34px;border-radius:10px;
+      background:
+        linear-gradient(135deg, rgba(99,102,241,.95), rgba(59,130,246,.85));
+      box-shadow: 0 10px 22px rgba(99,102,241,.22);
+      position:relative;
+    }
+    .brandMark:after{
+      content:"";
+      position:absolute; inset:8px;
+      border-radius:7px;
+      background: rgba(255,255,255,.35);
+      mix-blend-mode: screen;
+    }
+    .brandTitle{
+      font-weight:800;
+      letter-spacing:.02em;
+      font-size: 18px;
+      line-height:1.1;
+    }
+    .brandSub{
+      font-size:12px;
+      color: var(--muted);
+      margin-top:2px;
+    }
+
+    .search{
+      margin: 6px 10px 14px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,.85);
+    }
+    .search input{
+      width:100%;
+      border:0; outline:0;
+      background: transparent;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .search .icon{
+      color: var(--muted2);
+      font-size: 14px;
+    }
+
+    .menuLabel{
+      margin: 16px 12px 10px;
+      font-size: 11px;
+      color: var(--muted2);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .nav{
+      display:grid;
+      gap: 6px;
+      padding: 0 6px;
+    }
+    .nav a{
+      text-decoration:none;
+      color: rgba(15,23,42,.85);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .nav a .nIco{
+      width:28px;height:28px;border-radius:10px;
+      display:grid;place-items:center;
+      background: rgba(15,23,42,.05);
+      color: rgba(15,23,42,.65);
+      font-size: 14px;
+    }
+    .nav a.active{
+      background: rgba(34,197,94,.12);
+      border: 1px solid rgba(34,197,94,.20);
+    }
+    .nav a.active .nIco{
+      background: rgba(34,197,94,.18);
+      color: rgba(15,23,42,.85);
+    }
+    .nav a:hover{
+      background: rgba(15,23,42,.04);
+    }
+
+    .sidebarFooter{
+      position: sticky;
+      top: calc(100vh - 180px);
+      margin-top: 24px;
+      padding: 12px 10px;
+      border-top: 1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .user{
+      display:flex; align-items:center; gap:10px;
+      min-width:0;
+    }
+    .avatar{
+      width:34px;height:34px;border-radius:12px;
+      background: linear-gradient(135deg, rgba(15,23,42,.10), rgba(15,23,42,.04));
+      border: 1px solid rgba(15,23,42,.08);
+    }
+    .userMeta{min-width:0}
+    .userName{font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .userRole{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .settingsBtn{
+      width:36px;height:36px;border-radius:12px;
+      display:grid;place-items:center;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.9);
+      color: rgba(15,23,42,.70);
+    }
+
+    /* Main */
+    .main{
+      padding: 26px 26px 30px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .titleBlock .h1{
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .titleBlock .meta{
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.05);
+      color: rgba(15,23,42,.78);
+      font-size: 12px;
+      font-weight: 750;
+    }
+    .pill .dot{
+      width:8px;height:8px;border-radius:99px;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(34,197,94,.15);
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.85);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 13px;
+      color: rgba(15,23,42,.85);
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      box-shadow: 0 6px 18px rgba(15,23,42,.05);
+      cursor: pointer;
+    }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(34,197,94,.98), rgba(34,197,94,.82));
+      color: #ffffff;
+      border: 1px solid rgba(34,197,94,.35);
+      box-shadow: 0 14px 32px rgba(34,197,94,.18);
+    }
+
+    /* KPI Cards row */
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(260px, 1fr)) 360px;
+      gap: 16px;
+      margin: 14px 0 16px;
+      align-items: stretch;
+    }
+
+    .card{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      padding: 16px 16px 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:-120px -90px auto auto;
+      width:220px;height:220px;
+      border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, rgba(99,102,241,.18), transparent 60%);
+      pointer-events:none;
+    }
+    .cardHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+    }
+    .cardTitle{
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      font-weight: 900;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 850;
+      background: rgba(99,102,241,.10);
+      color: rgba(67,56,202,.92);
+      border: 1px solid rgba(99,102,241,.20);
+    }
+    .badge.negative{
+      background: rgba(239,68,68,.10);
+      border-color: rgba(239,68,68,.18);
+      color: rgba(185,28,28,.92);
+    }
+    .badge.neutral{
+      background: rgba(15,23,42,.06);
+      border-color: rgba(15,23,42,.08);
+      color: rgba(15,23,42,.70);
+    }
+
+    .cardValue{
+      margin-top: 10px;
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .bigNum{
+      font-size: 38px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      line-height:1;
+    }
+    .subNum{
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .cardLine{
+      margin-top: 10px;
+      font-size: 13px;
+      color: rgba(15,23,42,.72);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 12px;
+      background: var(--chip);
+      font-size: 12px;
+      font-weight: 850;
+      color: rgba(15,23,42,.78);
+    }
+    .chip strong{font-weight:950}
+    .cta{
+      margin-top: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .link{
+      font-weight: 900;
+      font-size: 13px;
+      color: rgba(67,56,202,.92);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(99,102,241,.08);
+      border: 1px solid rgba(99,102,241,.14);
+    }
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    /* Right sidebar card (Insights preview) */
+    .insightsCard{
+      padding: 14px 14px 12px;
+    }
+    .insightsHeader{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .insightsHeader .h{
+      font-weight: 950;
+      letter-spacing: -0.02em;
+      font-size: 14px;
+    }
+    .insightsHeader .s{
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .insightList{
+      display:grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .insightItem{
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 10px;
+      background: rgba(255,255,255,.85);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .rank{
+      width:30px;height:30px;border-radius:12px;
+      display:grid;place-items:center;
+      font-weight: 950;
+      font-size: 12px;
+      background: rgba(34,197,94,.14);
+      border: 1px solid rgba(34,197,94,.18);
+      color: rgba(15,23,42,.82);
+      flex: 0 0 auto;
+    }
+    .insText{min-width:0}
+    .insTitle{
+      font-weight: 900;
+      font-size: 13px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: normal;
+      max-width: 100%;
+    }
+    .insSub{
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .tag{
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.06);
+      font-weight: 800;
+      font-size: 11px;
+      color: rgba(15,23,42,.72);
+    }
+
+    /* Main grid under KPIs */
+    .grid{
+      display:grid;
+      grid-template-columns: 1.35fr .95fr;
+      gap: 16px;
+      align-items:start;
+      margin-top: 10px;
+    }
+
+    .panel{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow2);
+      padding: 16px;
+      overflow:hidden;
+      position:relative;
+    }
+    .panelHead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .panelTitle{
+      font-size: 14px;
+      font-weight: 950;
+      letter-spacing: -0.01em;
+    }
+    .panelSub{
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* “Younger gen UI” chart placeholder */
+    .chart{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(99,102,241,.06), rgba(255,255,255,.75));
+      border-radius: 18px;
+      padding: 12px 12px 10px;
+      position:relative;
+      overflow:hidden;
+    }
+    .chartTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .range{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.9);
+      color: rgba(15,23,42,.80);
+      font-size: 12px;
+      font-weight: 850;
+      white-space:nowrap;
+    }
+    .legend{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      align-items:center;
+    }
+    .lg{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .sw{width:10px;height:10px;border-radius:99px}
+    .sw.a{background: var(--violet)}
+    .sw.b{background: var(--red)}
+    .svgWrap{
+      width:100%;
+      height: 190px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.68);
+      border: 1px dashed rgba(15,23,42,.10);
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .svgWrap svg{width:100%;height:100%}
+    .axisLabel{
+      position:absolute;
+      bottom:10px;
+      left:12px;
+      right:12px;
+      display:flex;
+      justify-content:space-between;
+      color: rgba(15,23,42,.42);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing:.04em;
+    }
+
+    /* Insights feed (center) */
+    .feed{
+      margin-top: 12px;
+      display:grid;
+      gap: 10px;
+    }
+    .feedItem{
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px 12px;
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+      background: rgba(255,255,255,.92);
+    }
+    .feedIcon{
+      width:40px;height:40px;border-radius: 14px;
+      display:grid;place-items:center;
+      font-size: 16px;
+      background: rgba(99,102,241,.10);
+      border: 1px solid rgba(99,102,241,.16);
+      color: rgba(67,56,202,.92);
+      flex: 0 0 auto;
+    }
+    .feedMain{min-width:0}
+    .feedTitle{
+      font-weight: 950;
+      font-size: 13px;
+      letter-spacing: -0.01em;
+    }
+    .feedDesc{
+      margin-top: 3px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .feedMeta{
+      margin-top: 8px;
+      display:flex;
+      gap: 8px;
+      flex-wrap:wrap;
+    }
+    .pillMini{
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.06);
+      font-size: 11px;
+      font-weight: 900;
+      color: rgba(15,23,42,.72);
+    }
+    .pillMini.money{
+      background: rgba(34,197,94,.12);
+      border: 1px solid rgba(34,197,94,.16);
+      color: rgba(15,23,42,.85);
+    }
+    .pillMini.risk{
+      background: rgba(245,158,11,.12);
+      border: 1px solid rgba(245,158,11,.18);
+      color: rgba(15,23,42,.85);
+    }
+
+    /* Appraisal Assist panel (right) */
+    .aaBox{
+      display:grid;
+      gap: 12px;
+    }
+    .aaHero{
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+      background: rgba(255,255,255,.92);
+    }
+    .aaTitle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .aaTitle .t{
+      font-weight: 950;
+      font-size: 13px;
+    }
+    .aaTitle .c{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    .aaSearch{
+      margin-top: 10px;
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.95);
+    }
+    .aaSearch input{
+      width:100%;
+      border:0;
+      outline:0;
+      background:transparent;
+      font-size: 13px;
+    }
+    .aaHint{
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .state{
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+      background: rgba(255,255,255,.92);
+    }
+    .stateHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+    }
+    .stateName{
+      font-weight: 950;
+      font-size: 13px;
+    }
+    .stateSub{
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .kvRow{
+      margin-top: 10px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(15,23,42,.12);
+      font-size: 12px;
+      color: rgba(15,23,42,.75);
+      font-weight: 800;
+    }
+
+    .confidence{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top: 10px;
+    }
+    .meter{
+      flex:1;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.08);
+      overflow:hidden;
+      border: 1px solid rgba(15,23,42,.10);
+    }
+    .bar{
+      height:100%;
+      width: 72%;
+      background: linear-gradient(90deg, rgba(34,197,94,.95), rgba(59,130,246,.85));
+      border-radius: 999px;
+    }
+    .confText{
+      font-size: 12px;
+      font-weight: 950;
+      color: rgba(15,23,42,.80);
+      width: 44px;
+      text-align:right;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px){
+      .kpis{grid-template-columns: repeat(2, minmax(260px,1fr));}
+      .grid{grid-template-columns: 1fr;}
+    }
+    @media (max-width: 860px){
+      .app{grid-template-columns: 1fr;}
+      .sidebar{display:none;}
+      .main{padding: 18px;}
+      .kpis{grid-template-columns: 1fr;}
+    }
+  
+    .decodedRow{
+      margin-top: 10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+    .decodedChip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.05);
+      border: 1px solid rgba(15,23,42,.08);
+      font-size: 12px;
+      font-weight: 900;
+      color: rgba(15,23,42,.78);
+      max-width: 100%;
+    }
+    .decodedChip .k{
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-weight: 950;
+      color: rgba(15,23,42,.42);
+    }
+    .decodedChip .v{
+      font-weight: 950;
+      color: rgba(15,23,42,.85);
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+    .decodedChip.vin .v{max-width: 300px;}
+    .decodedHint{
+      font-size: 11px;
+      font-weight: 850;
+      color: rgba(15,23,42,.55);
+      margin-left: 2px;
+    }
+
+    /* Appraisal Assist mode micro-upgrade */
+    .aaModeContext .state.internalCard{
+      opacity: .35;
+      filter: grayscale(.25);
+      transform: translateY(1px);
+    }
+    .aaModeContext .state.contextCard{
+      border-color: rgba(99,102,241,.30);
+      box-shadow: 0 18px 45px rgba(99,102,241,.14);
+      position: relative;
+    }
+    .aaModeContext .state.contextCard:before{
+      content:"";
+      position:absolute;
+      inset:-120px -90px auto auto;
+      width:220px;height:220px;
+      border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, rgba(99,102,241,.22), transparent 60%);
+      pointer-events:none;
+    }
+    .aaModePerformance .state.contextCard{
+      opacity:.65;
+    }
+
+    /* Tiny toast (demo confirmation) */
+    .oaToast{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9999;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(15,23,42,.92);
+      color: rgba(255,255,255,.95);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 18px 45px rgba(15,23,42,.22);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .02em;
+      display:none;
+      transform: translateY(8px);
+      opacity: 0;
+      transition: opacity .18s ease, transform .18s ease;
+      max-width: min(320px, calc(100vw - 36px));
+      pointer-events: none;
+    }
+    .oaToast.show{
+      display:block;
+      opacity: 1;
+      transform: translateY(0px);
+    }
+    .oaToast .muted{
+      color: rgba(255,255,255,.72);
+      font-weight: 800;
+      margin-left: 6px;
+    }
+</style>
+</head>
+<body>
+  <div class="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brandMark"></div>
+        <div>
+          <div class="brandTitle">Outcome AI</div>
+          <div class="brandSub">Decision Intelligence</div>
+        </div>
+      </div>
+
+      <div class="search">
+        <span class="icon">⌕</span>
+        <input placeholder="Search VIN, stock #, Y/M/M/T, insight…" />
+      </div>
+
+      <div class="menuLabel">Main</div>
+      <nav class="nav">
+        <a class="active" href="#" data-action="nav-dashboard"><span class="nIco">▦</span>Dashboard</a>
+        <a href="#" data-action="open-acquire"><span class="nIco">⚡</span>Acquire</a>
+        <a href="#" data-action="open-stop"><span class="nIco">⛔</span>Stop Buying</a>
+        <a href="#" data-action="open-capital"><span class="nIco">💰</span>Capital</a>
+        <a href="#" data-action="open-appraisal"><span class="nIco">🧠</span>Appraisal Assist</a>
+        <a href="#" data-action="open-insights"><span class="nIco">✨</span>Insights</a>
+        <a href="#"><span class="nIco">⚙</span>Settings</a>
+      </nav>
+
+      <div class="sidebarFooter">
+        <div class="user">
+          <div class="avatar"></div>
+          <div class="userMeta">
+            <div class="userName">Demo Ford Store</div>
+            <div class="userRole">Live Demo • Read-only</div>
+          </div>
+        </div>
+        <div class="settingsBtn" title="Refresh (mock)">⟲</div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="topbar">
+        <div class="titleBlock">
+          <div class="h1">Command Center</div>
+          <div class="meta">
+            <span class="pill"><span class="dot"></span> Live • Connected</span>
+            <span class="pill"><span id="meta-updated">Updated: 2 min ago</span></span>
+            <span class="pill"><span id="meta-store">Store: Ford • 60 units</span></span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn" type="button">⬆︎ Import</button>
+          <button class="btn primary" type="button">＋ New Insight</button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <section class="kpis">
+
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">Acquire Now</div>
+            <div class="badge">↑ demand signal</div>
+          </div>
+          <div class="cardValue">
+            <div class="bigNum"><span id="kpi-acquire-count">7</span></div>
+            <div class="subNum">high-confidence matches in your market</div>
+          </div>
+          <div class="cardLine">
+            <span class="chip">⏳ <strong>$6,300</strong> cost of inaction</span>
+            <span class="chip">🛡️ Buy-window is closing</span>
+          </div>
+          <div class="cta">
+            <a class="link" href="#" data-action="open-acquire">View matches →</a>
+            <span class="hint">Intel first. Action second.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">Stop Buying</div>
+            <div class="badge negative">↑ risk</div>
+          </div>
+          <div class="cardValue">
+            <div class="bigNum"><span id="kpi-stop-count">30</span></div>
+            <div class="subNum">units stacking risk if you keep feeding it</div>
+          </div>
+          <div class="cardLine">
+            <span class="chip">⛔ <span id="kpi-stop-segments">2</span> segments oversupplied</span>
+            <span class="chip">📉 Gross compression trend</span>
+          </div>
+          <div class="cta">
+            <a class="link" href="#" data-action="open-stop">See segments →</a>
+            <span class="hint">Stop the bleed early.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">Expected Gross at Risk</div>
+            <div class="badge neutral">quiet leak</div>
+          </div>
+          <div class="cardValue">
+            <div class="bigNum"><span id="kpi-capital-amount">$53,771</span></div>
+            <div class="subNum">gross exposed in inventory</div>
+          </div>
+          <div class="cardLine">
+            <span class="chip">⚠️ <strong><span id="kpi-capital-offenders">2</span></strong> units driving most exposure</span>
+            <span class="chip">🧊 Aging drains margin</span>
+          </div>
+          <div class="cta">
+            <a class="link" href="#" data-action="open-capital">Show offenders →</a>
+            <span class="hint">Protect gross, fast.</span>
+          </div>
+        </div>
+
+        <!-- Insights Preview card (right column) -->
+        <div class="card insightsCard">
+          <div class="insightsHeader">
+            <div>
+              <div class="h">Insights</div>
+              <div class="s">Signals you can act on this week</div>
+            </div>
+            <div class="badge neutral">Top 10</div>
+          </div>
+
+          <div class="insightList">
+            <div class="insightItem">
+              <div class="rank">1</div>
+              <div class="insText">
+                <div class="insTitle">F-150 XLT 302A: peak demand window</div>
+                <div class="insSub">
+                  <span class="tag">+$2,900 avg edge</span>
+                  <span class="tag">Turn: ~21 days</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="insightItem">
+              <div class="rank">2</div>
+              <div class="insText">
+                <div class="insTitle">Explorer XLT: oversupply building</div>
+                <div class="insSub">
+                  <span class="tag">Stop buying</span>
+                  <span class="tag">Gross compression</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="insightItem">
+              <div class="rank">3</div>
+              <div class="insText">
+                <div class="insTitle">Capital risk concentrated in 2 units</div>
+                <div class="insSub">
+                  <span class="tag">$18k exposure</span>
+                  <span class="tag">Aging cliff</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+            <a class="link" href="#" style="padding:8px 10px;" data-action="open-insights">Open insights →</a>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Main content grid -->
+      <section class="grid">
+
+        <!-- Left: Intelligence (chart + feed) -->
+        <div class="panel">
+          <div class="panelHead">
+            <div>
+              <div class="panelTitle">Intelligence Overview</div>
+              <div class="panelSub">Demand, supply, and aging pressure — the stuff that moves profit.</div>
+            </div>
+            <div class="range">Last 30 days ▾</div>
+          </div>
+
+          <div class="chart">
+            <div class="chartTop">
+              <div class="legend">
+                <span class="lg"><span class="sw a"></span> Demand Strength</span>
+                <span class="lg"><span class="sw b"></span> Aging Pressure</span>
+              </div>
+              <div class="range">Segment: Trucks ▾</div>
+            </div>
+
+            <div class="svgWrap">
+              <!-- Static decorative chart (no JS) -->
+              <svg viewBox="0 0 900 240" preserveAspectRatio="none" aria-label="Chart mock">
+                <defs>
+                  <linearGradient id="g1" x1="0" x2="1">
+                    <stop offset="0" stop-color="rgba(139,92,246,.85)"/>
+                    <stop offset="1" stop-color="rgba(99,102,241,.75)"/>
+                  </linearGradient>
+                  <linearGradient id="g2" x1="0" x2="1">
+                    <stop offset="0" stop-color="rgba(239,68,68,.55)"/>
+                    <stop offset="1" stop-color="rgba(239,68,68,.35)"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- grid lines -->
+                <g opacity=".22" stroke="rgba(15,23,42,.30)" stroke-width="1">
+                  <line x1="0" y1="40" x2="900" y2="40"/>
+                  <line x1="0" y1="90" x2="900" y2="90"/>
+                  <line x1="0" y1="140" x2="900" y2="140"/>
+                  <line x1="0" y1="190" x2="900" y2="190"/>
+                </g>
+
+                <!-- demand -->
+                <path d="M0,160 C110,40 210,60 300,120 C380,175 470,190 560,110 C650,40 740,70 900,50"
+                      fill="none" stroke="url(#g1)" stroke-width="6" stroke-linecap="round"/>
+                <!-- aging -->
+                <path d="M0,90 C120,140 220,160 300,120 C380,80 460,60 560,100 C680,150 760,170 900,140"
+                      fill="none" stroke="url(#g2)" stroke-width="4" stroke-linecap="round"/>
+
+                <!-- focus point -->
+                <circle cx="560" cy="110" r="7" fill="rgba(99,102,241,.95)"/>
+                <circle cx="560" cy="110" r="16" fill="rgba(99,102,241,.18)"/>
+              </svg>
+
+              <div class="axisLabel">
+                <span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feed">
+            <div class="feedItem">
+              <div class="feedIcon">⚡</div>
+              <div class="feedMain">
+                <div class="feedTitle">Acquire signal: F-150 XLT 302A exits faster than peer average.</div>
+                <div class="feedDesc">Outcome found repeatable front gross when bought under your guardrails — this is an “Acquire Now” profile.</div>
+                <div class="feedMeta">
+                  <span class="pillMini money">+$2,900 avg edge</span>
+                  <span class="pillMini">Turn &lt; ~21 days</span>
+                  <span class="pillMini">Confidence: High</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="feedItem">
+              <div class="feedIcon">⛔</div>
+              <div class="feedMain">
+                <div class="feedTitle">Stop signal: oversupply is building in 2 segments.</div>
+                <div class="feedDesc">Outcome detects patterns that historically compress gross once inventory crosses the 30–45 day zone.</div>
+                <div class="feedMeta">
+                  <span class="pillMini risk">Risk rising</span>
+                  <span class="pillMini">Aging cliff: 30–45 days</span>
+                  <span class="pillMini">Confidence: Medium</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="feedItem">
+              <div class="feedIcon">💰</div>
+              <div class="feedMain">
+                <div class="feedTitle">Capital risk: 2 units are driving most of your exposure.</div>
+                <div class="feedDesc">Outcome flags the offenders where gross erodes fastest as days-in-stock climbs — fix these first.</div>
+                <div class="feedMeta">
+                  <span class="pillMini money">$53,771 exposed</span>
+                  <span class="pillMini">2 offenders</span>
+                  <span class="pillMini">Confidence: High</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Appraisal Assist (context engine) -->
+        <div class="panel">
+          <div class="panelHead">
+            <div>
+              <div class="panelTitle">Appraisal Assist</div>
+              <div class="panelSub">Appraise in your tool. Check Outcome for context + performance.</div>
+            </div>
+            <div class="range">Recon Reality ▾</div>
+          </div>
+
+          <div id="aaPanel" class="aaBox aaModePerformance">
+            <div class="aaHero">
+              <div class="aaTitle">
+                <div class="t">Lookup vehicle context</div>
+                <div class="c">VIN / Y-M-M-T</div>
+              </div>
+              <div class="aaSearch">
+                <span style="color:var(--muted2)">⌕</span>
+                <input id="aaInput" placeholder="e.g., 2021 Ford F-150 XLT 302A or VIN…" />
+                <button class="pill" style="padding:6px 10px; border:0; cursor:pointer;" data-action="aa-analyze">Analyze</button>
+                <button class="btn" style="padding:6px 10px; box-shadow:none;" data-action="aa-clear">Clear</button>
+              </div>
+              <div id="aaDecoded" class="decodedRow" style="display:none;"></div>
+              <div class="aaHint">
+                If you’ve never owned it, Outcome does <strong>Context Mode</strong>:
+                peer-based signals, market guardrails, and a confidence score — <strong>not</strong> a blank screen.
+              </div>
+            </div>
+
+            <!-- State: Has Internal Data -->
+            <div class="state internalCard">
+              <div class="stateHead">
+                <div>
+                  <div class="stateName">Internal History Found</div>
+                  <div class="stateSub">Outcome detected prior ownership + store-specific performance trends.</div>
+                </div>
+                <div class="badge">High confidence</div>
+              </div>
+
+              <div class="kvRow">
+                <span>Repeatable front gross</span>
+                <span><strong>+$2,900</strong> avg</span>
+              </div>
+              <div class="kvRow" style="border-top:0;padding-top:8px;">
+                <span>Typical turn</span>
+                <span><strong>~21 days</strong></span>
+              </div>
+              <div class="confidence">
+                <div class="meter"><div class="bar" style="width:72%"></div></div>
+                <div class="confText">72%</div>
+              </div>
+            </div>
+
+            <!-- State: Zero Internal Data -->
+            <div class="state contextCard">
+              <div class="stateHead">
+                <div>
+                  <div class="stateName">No Internal History</div>
+                  <div class="stateSub">You haven’t owned this profile. Outcome switches to peer + market intelligence.</div>
+                </div>
+                <div class="badge neutral">Context mode</div>
+              </div>
+
+              <div class="kvRow">
+                <span>Market guardrails</span>
+                <span><strong>Max Buy</strong> + Turn</span>
+              </div>
+              <div class="kvRow" style="border-top:0;padding-top:8px;">
+                <span>Peer outcomes</span>
+                <span><strong>Comparable dealers</strong></span>
+              </div>
+              <div class="confidence">
+                <div class="meter">
+                  <div class="bar" style="width:54%; background: linear-gradient(90deg, rgba(245,158,11,.95), rgba(59,130,246,.75));"></div>
+                </div>
+                <div class="confText">54%</div>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+              <a class="link" href="#" style="flex:1; justify-content:center;" data-action="open-appraisal">Open Appraisal Assist →</a>
+              <button class="btn" type="button" style="flex:1; justify-content:center;"><button class="btn" data-action="open-guardrails" style="flex:1; justify-content:center;">View guardrails</button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- Outcome V1 Demo Modal -->
+  <div id="oa-modal" style="display:none; position:fixed; inset:0; z-index:9999;">
+    <div id="oa-modal-backdrop" style="position:absolute; inset:0; background:rgba(15,23,42,.45); backdrop-filter: blur(4px);"></div>
+    <div style="position:relative; max-width: 1320px; width: min(1320px, 96vw); margin: 6vh auto; padding: 0 16px;">
+      <div style="background: var(--panel); border:1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 70px rgba(15,23,42,.22); overflow:hidden;" max-height:80vh; display:flex; flex-direction:column;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 14px 16px; border-bottom:1px solid var(--line);">
+          <div style="min-width:0;">
+            <div id="oa-modal-title" style="font-weight:950; letter-spacing:-0.02em; font-size: 15px;">Modal</div>
+            <div id="oa-modal-sub" style="margin-top:2px; color: var(--muted); font-size: 12px; font-weight: 700;"></div>
+          </div>
+          <button id="oa-modal-close" class="btn" style="padding: 10px 12px;">Close ✕</button>
+        </div>
+        <div id="oa-modal-body" style="padding: 14px 16px 16px; flex:1; max-height: calc(80vh - 64px); overflow:auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="demo-data.js"></script>
+  <script src="app.js"></script>
+
+  <div id="oaToast" class="oaToast" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
