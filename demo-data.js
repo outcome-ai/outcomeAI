@@ -1,8 +1,17 @@
+// =============================================================
+// OUTCOME AI — V1 CLICKABLE DEMO DATA (REPRESENTATIVE)
+// -------------------------------------------------------------
+// This file contains representative demo data used to validate the
+// UI and demo narrative. It is NOT live dealer data.
+// Replace this with real dealer data only after contracting and
+// establishing permissions and data handling requirements.
+// =============================================================
+
 window.OUTCOME_DEMO = {
   "meta": {
     "updated": "Updated: 2 min ago",
     "store": "Store: Ford \u2022 60 units",
-    "live": true
+    "live": false
   },
   "kpis": {
     "acquire": {

@@ -850,7 +850,28 @@
       font-weight: 800;
       margin-left: 6px;
     }
-</style>
+
+    /* Demo disclaimer */
+    .demoDisclaimer{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9998;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(15,23,42,.12);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      color: rgba(15,23,42,.70);
+      box-shadow: 0 10px 24px rgba(15,23,42,.10);
+      pointer-events: none;
+    }
+    @media (max-width: 860px){
+      .demoDisclaimer{ right: 12px; bottom: 12px; }
+    }
+
+  </style>
 </head>
 <body>
   <div class="app">
@@ -886,7 +907,7 @@
           <div class="avatar"></div>
           <div class="userMeta">
             <div class="userName">Demo Ford Store</div>
-            <div class="userRole">Live Demo • Read-only</div>
+            <div class="userRole">Demo environment • Read-only</div>
           </div>
         </div>
         <div class="settingsBtn" title="Refresh (mock)">⟲</div>
@@ -899,7 +920,7 @@
         <div class="titleBlock">
           <div class="h1">Command Center</div>
           <div class="meta">
-            <span class="pill"><span class="dot"></span> Live • Connected</span>
+            <span class="pill"><span class="dot"></span> Demo • Representative data</span>
             <span class="pill"><span id="meta-updated">Updated: 2 min ago</span></span>
             <span class="pill"><span id="meta-store">Store: Ford • 60 units</span></span>
           </div>
@@ -1237,5 +1258,7 @@
   <script src="app.js"></script>
 
   <div id="oaToast" class="oaToast" aria-live="polite" aria-atomic="true"></div>
+  <div class="demoDisclaimer">Demo environment — representative data for illustration.</div>
+
 </body>
 </html>

@@ -174,35 +174,58 @@ const fmtMoney = (n) => {
     const wrap = !!opts.wrap;
     const noXScroll = !!opts.noXScroll;
     const wrapCols = opts.wrapCols || [];
+    const ellipsis = (opts.ellipsis !== undefined) ? !!opts.ellipsis : true;
+
+    // Column widths: either provided or inferred by header count (defaults preserve the original 8-col layout)
+    const inferred = () => {
+      const n = headers.length;
+      if(n === 5){
+        // Segment / Why / On hand / Target Max / Risk
+        return ["220px", null, "90px", "110px", "90px"];
+      }
+      if(n === 8){
+        // Original default used throughout v1
+        return ["44px","180px",null,"90px","70px","95px","120px",null];
+      }
+      // Fallback: all auto
+      return Array.from({length:n}, ()=>null);
+    };
+
+    const colWidths = (opts.colWidths && Array.isArray(opts.colWidths) && opts.colWidths.length === headers.length)
+      ? opts.colWidths
+      : inferred();
+
+    // Layout: keep the original behavior by default (fixed + ellipsis), but allow "auto" for content-driven sizing
+    const tableLayout = opts.tableLayout || (noXScroll ? "fixed" : "fixed");
+
     const cellStyle = (idx) => {
       if(wrap) return "white-space:normal; word-break:break-word;";
       if(wrapCols.includes(idx)) return "white-space:normal; word-break:break-word;";
       return "white-space:nowrap;";
     };
+
+    const tdOverflow = () => {
+      if(!ellipsis) return "overflow:visible; text-overflow:clip;";
+      return "overflow:hidden; text-overflow:ellipsis;";
+    };
+
     const pad = (idx) => idx <= 1 ? "6px 8px" : "10px";
 
     return `
       <div style="overflow:${noXScroll ? "hidden" : "auto"}; border:1px solid var(--line); border-radius: 16px;">
-        <table style="width:100%; border-collapse:collapse; font-size: 12.5px; table-layout: fixed;">
+        <table style="width:100%; border-collapse:collapse; font-size: 12.5px; table-layout:${tableLayout};">
           <colgroup>
-            <col style="width:44px" />
-            <col style="width:180px" />
-            <col />
-            <col style="width:90px" />
-            <col style="width:70px" />
-            <col style="width:95px" />
-            <col style="width:120px" />
-            <col />
+            ${colWidths.map(w => `<col ${w ? `style="width:${w}"` : ""} />`).join("")}
           </colgroup>
           <thead>
             <tr style="background: rgba(15,23,42,.04);">
-              ${headers.map((h,idx)=>`<th style="text-align:left; padding:${pad(idx)}; border-bottom:1px solid var(--line); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${h}</th>`).join("")}
+              ${headers.map((h,idx)=>`<th style="text-align:left; padding:10px; font-weight:900; color: rgba(15,23,42,.78); border-bottom:1px solid var(--line); ${cellStyle(idx)} ${ellipsis ? "overflow:hidden; text-overflow:ellipsis;" : ""}">${h}</th>`).join("")}
             </tr>
           </thead>
           <tbody>
             ${rows.map(r=>`
               <tr>
-                ${r.map((c,idx)=>`<td style="padding:${pad(idx)}; border-bottom:1px solid rgba(232,235,242,.8); ${cellStyle(idx)} overflow:hidden; text-overflow:ellipsis;">${c}</td>`).join("")}
+                ${r.map((c,idx)=>`<td style="padding:${pad(idx)}; border-bottom:1px solid rgba(15,23,42,.06); ${cellStyle(idx)} ${tdOverflow()}">${c}</td>`).join("")}
               </tr>
             `).join("")}
           </tbody>
@@ -332,7 +355,7 @@ const fmtMoney = (n) => {
           <span class="pillMini">Goal: stop feeding early</span>
           <span class="pillMini">Watch: days 30–45</span>
         </div>
-        ${table(headers, rows)}
+        ${table(headers, rows, { tableLayout:"auto", ellipsis:false, colWidths:["220px", null, "90px","110px","90px"], wrapCols:[1] })}
       `
     });
   }
@@ -349,7 +372,7 @@ const fmtMoney = (n) => {
           <span class="pillMini">Offenders: ${cap.offenders}</span>
           <span class="pillMini">Principle: focus fixes</span>
         </div>
-        ${table(headers, rows)}
+        ${table(headers, rows, { tableLayout:"auto", ellipsis:false, colWidths:["110px","220px", null, "90px","90px","80px","100px", null], wrapCols:[2,7] })}
       `
     });
   }

@@ -2,709 +2,1263 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Outcome AI — Decision Board</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Outcome AI — Dashboard V2 (Static Mock)</title>
+  <style>
+    :root{
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --muted: #6b7280;
+      --muted2:#9aa3b2;
+      --text: #0f172a;
+      --line: #e8ebf2;
+      --shadow: 0 10px 28px rgba(15, 23, 42, .08);
+      --shadow2: 0 18px 45px rgba(15, 23, 42, .10);
+      --radius: 16px;
+      --radius2: 22px;
+
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --indigo:#6366f1;
+      --violet:#8b5cf6;
+
+      --chip: rgba(15, 23, 42, .06);
+      --chip2: rgba(99, 102, 241, .10);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 18% 8%, rgba(99,102,241,.14), transparent 55%),
+        radial-gradient(900px 520px at 84% 18%, rgba(59,130,246,.12), transparent 55%),
+        radial-gradient(900px 520px at 62% 78%, rgba(34,197,94,.08), transparent 55%),
+        var(--bg);
+    }
+
+    /* Layout */
+    .app{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      min-height:100vh;
+    }
+
+    /* Sidebar */
+    .sidebar{
+      padding: 22px 18px;
+      border-right: 1px solid var(--line);
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 8px 10px 18px;
+    }
+    .brandMark{
+      width:34px;height:34px;border-radius:10px;
+      background:
+        linear-gradient(135deg, rgba(99,102,241,.95), rgba(59,130,246,.85));
+      box-shadow: 0 10px 22px rgba(99,102,241,.22);
+      position:relative;
+    }
+    .brandMark:after{
+      content:"";
+      position:absolute; inset:8px;
+      border-radius:7px;
+      background: rgba(255,255,255,.35);
+      mix-blend-mode: screen;
+    }
+    .brandTitle{
+      font-weight:800;
+      letter-spacing:.02em;
+      font-size: 18px;
+      line-height:1.1;
+    }
+    .brandSub{
+      font-size:12px;
+      color: var(--muted);
+      margin-top:2px;
+    }
+
+    .search{
+      margin: 6px 10px 14px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,.85);
+    }
+    .search input{
+      width:100%;
+      border:0; outline:0;
+      background: transparent;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .search .icon{
+      color: var(--muted2);
+      font-size: 14px;
+    }
+
+    .menuLabel{
+      margin: 16px 12px 10px;
+      font-size: 11px;
+      color: var(--muted2);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .nav{
+      display:grid;
+      gap: 6px;
+      padding: 0 6px;
+    }
+    .nav a{
+      text-decoration:none;
+      color: rgba(15,23,42,.85);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .nav a .nIco{
+      width:28px;height:28px;border-radius:10px;
+      display:grid;place-items:center;
+      background: rgba(15,23,42,.05);
+      color: rgba(15,23,42,.65);
+      font-size: 14px;
+    }
+    .nav a.active{
+      background: rgba(34,197,94,.12);
+      border: 1px solid rgba(34,197,94,.20);
+    }
+    .nav a.active .nIco{
+      background: rgba(34,197,94,.18);
+      color: rgba(15,23,42,.85);
+    }
+    .nav a:hover{
+      background: rgba(15,23,42,.04);
+    }
+
+    .sidebarFooter{
+      position: sticky;
+      top: calc(100vh - 180px);
+      margin-top: 24px;
+      padding: 12px 10px;
+      border-top: 1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .user{
+      display:flex; align-items:center; gap:10px;
+      min-width:0;
+    }
+    .avatar{
+      width:34px;height:34px;border-radius:12px;
+      background: linear-gradient(135deg, rgba(15,23,42,.10), rgba(15,23,42,.04));
+      border: 1px solid rgba(15,23,42,.08);
+    }
+    .userMeta{min-width:0}
+    .userName{font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .userRole{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .settingsBtn{
+      width:36px;height:36px;border-radius:12px;
+      display:grid;place-items:center;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.9);
+      color: rgba(15,23,42,.70);
+    }
+
+    /* Main */
+    .main{
+      padding: 26px 26px 30px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .titleBlock .h1{
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .titleBlock .meta{
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.05);
+      color: rgba(15,23,42,.78);
+      font-size: 12px;
+      font-weight: 750;
+    }
+    .pill .dot{
+      width:8px;height:8px;border-radius:99px;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(34,197,94,.15);
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.85);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 13px;
+      color: rgba(15,23,42,.85);
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      box-shadow: 0 6px 18px rgba(15,23,42,.05);
+      cursor: pointer;
+    }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(34,197,94,.98), rgba(34,197,94,.82));
+      color: #ffffff;
+      border: 1px solid rgba(34,197,94,.35);
+      box-shadow: 0 14px 32px rgba(34,197,94,.18);
+    }
+
+    /* KPI Cards row */
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(260px, 1fr)) 360px;
+      gap: 16px;
+      margin: 14px 0 16px;
+      align-items: stretch;
+    }
+
+    .card{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      padding: 16px 16px 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:-120px -90px auto auto;
+      width:220px;height:220px;
+      border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, rgba(99,102,241,.18), transparent 60%);
+      pointer-events:none;
+    }
+    .cardHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+    }
+    .cardTitle{
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      font-weight: 900;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 850;
+      background: rgba(99,102,241,.10);
+      color: rgba(67,56,202,.92);
+      border: 1px solid rgba(99,102,241,.20);
+    }
+    .badge.negative{
+      background: rgba(239,68,68,.10);
+      border-color: rgba(239,68,68,.18);
+      color: rgba(185,28,28,.92);
+    }
+    .badge.neutral{
+      background: rgba(15,23,42,.06);
+      border-color: rgba(15,23,42,.08);
+      color: rgba(15,23,42,.70);
+    }
+
+    .cardValue{
+      margin-top: 10px;
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .bigNum{
+      font-size: 38px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      line-height:1;
+    }
+    .subNum{
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .cardLine{
+      margin-top: 10px;
+      font-size: 13px;
+      color: rgba(15,23,42,.72);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 12px;
+      background: var(--chip);
+      font-size: 12px;
+      font-weight: 850;
+      color: rgba(15,23,42,.78);
+    }
+    .chip strong{font-weight:950}
+    .cta{
+      margin-top: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .link{
+      font-weight: 900;
+      font-size: 13px;
+      color: rgba(67,56,202,.92);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(99,102,241,.08);
+      border: 1px solid rgba(99,102,241,.14);
+    }
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    /* Right sidebar card (Insights preview) */
+    .insightsCard{
+      padding: 14px 14px 12px;
+    }
+    .insightsHeader{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .insightsHeader .h{
+      font-weight: 950;
+      letter-spacing: -0.02em;
+      font-size: 14px;
+    }
+    .insightsHeader .s{
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .insightList{
+      display:grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .insightItem{
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 10px;
+      background: rgba(255,255,255,.85);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .rank{
+      width:30px;height:30px;border-radius:12px;
+      display:grid;place-items:center;
+      font-weight: 950;
+      font-size: 12px;
+      background: rgba(34,197,94,.14);
+      border: 1px solid rgba(34,197,94,.18);
+      color: rgba(15,23,42,.82);
+      flex: 0 0 auto;
+    }
+    .insText{min-width:0}
+    .insTitle{
+      font-weight: 900;
+      font-size: 13px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: normal;
+      max-width: 100%;
+    }
+    .insSub{
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .tag{
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.06);
+      font-weight: 800;
+      font-size: 11px;
+      color: rgba(15,23,42,.72);
+    }
+
+    /* Main grid under KPIs */
+    .grid{
+      display:grid;
+      grid-template-columns: 1.35fr .95fr;
+      gap: 16px;
+      align-items:start;
+      margin-top: 10px;
+    }
+
+    .panel{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow2);
+      padding: 16px;
+      overflow:hidden;
+      position:relative;
+    }
+    .panelHead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .panelTitle{
+      font-size: 14px;
+      font-weight: 950;
+      letter-spacing: -0.01em;
+    }
+    .panelSub{
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* “Younger gen UI” chart placeholder */
+    .chart{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(99,102,241,.06), rgba(255,255,255,.75));
+      border-radius: 18px;
+      padding: 12px 12px 10px;
+      position:relative;
+      overflow:hidden;
+    }
+    .chartTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .range{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.9);
+      color: rgba(15,23,42,.80);
+      font-size: 12px;
+      font-weight: 850;
+      white-space:nowrap;
+    }
+    .legend{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      align-items:center;
+    }
+    .lg{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .sw{width:10px;height:10px;border-radius:99px}
+    .sw.a{background: var(--violet)}
+    .sw.b{background: var(--red)}
+    .svgWrap{
+      width:100%;
+      height: 190px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.68);
+      border: 1px dashed rgba(15,23,42,.10);
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .svgWrap svg{width:100%;height:100%}
+    .axisLabel{
+      position:absolute;
+      bottom:10px;
+      left:12px;
+      right:12px;
+      display:flex;
+      justify-content:space-between;
+      color: rgba(15,23,42,.42);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing:.04em;
+    }
+
+    /* Insights feed (center) */
+    .feed{
+      margin-top: 12px;
+      display:grid;
+      gap: 10px;
+    }
+    .feedItem{
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px 12px;
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+      background: rgba(255,255,255,.92);
+    }
+    .feedIcon{
+      width:40px;height:40px;border-radius: 14px;
+      display:grid;place-items:center;
+      font-size: 16px;
+      background: rgba(99,102,241,.10);
+      border: 1px solid rgba(99,102,241,.16);
+      color: rgba(67,56,202,.92);
+      flex: 0 0 auto;
+    }
+    .feedMain{min-width:0}
+    .feedTitle{
+      font-weight: 950;
+      font-size: 13px;
+      letter-spacing: -0.01em;
+    }
+    .feedDesc{
+      margin-top: 3px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .feedMeta{
+      margin-top: 8px;
+      display:flex;
+      gap: 8px;
+      flex-wrap:wrap;
+    }
+    .pillMini{
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.06);
+      font-size: 11px;
+      font-weight: 900;
+      color: rgba(15,23,42,.72);
+    }
+    .pillMini.money{
+      background: rgba(34,197,94,.12);
+      border: 1px solid rgba(34,197,94,.16);
+      color: rgba(15,23,42,.85);
+    }
+    .pillMini.risk{
+      background: rgba(245,158,11,.12);
+      border: 1px solid rgba(245,158,11,.18);
+      color: rgba(15,23,42,.85);
+    }
+
+    /* Appraisal Assist panel (right) */
+    .aaBox{
+      display:grid;
+      gap: 12px;
+    }
+    .aaHero{
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+      background: rgba(255,255,255,.92);
+    }
+    .aaTitle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .aaTitle .t{
+      font-weight: 950;
+      font-size: 13px;
+    }
+    .aaTitle .c{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    .aaSearch{
+      margin-top: 10px;
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.95);
+    }
+    .aaSearch input{
+      width:100%;
+      border:0;
+      outline:0;
+      background:transparent;
+      font-size: 13px;
+    }
+    .aaHint{
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .state{
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+      background: rgba(255,255,255,.92);
+    }
+    .stateHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+    }
+    .stateName{
+      font-weight: 950;
+      font-size: 13px;
+    }
+    .stateSub{
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .kvRow{
+      margin-top: 10px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(15,23,42,.12);
+      font-size: 12px;
+      color: rgba(15,23,42,.75);
+      font-weight: 800;
+    }
+
+    .confidence{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top: 10px;
+    }
+    .meter{
+      flex:1;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.08);
+      overflow:hidden;
+      border: 1px solid rgba(15,23,42,.10);
+    }
+    .bar{
+      height:100%;
+      width: 72%;
+      background: linear-gradient(90deg, rgba(34,197,94,.95), rgba(59,130,246,.85));
+      border-radius: 999px;
+    }
+    .confText{
+      font-size: 12px;
+      font-weight: 950;
+      color: rgba(15,23,42,.80);
+      width: 44px;
+      text-align:right;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px){
+      .kpis{grid-template-columns: repeat(2, minmax(260px,1fr));}
+      .grid{grid-template-columns: 1fr;}
+    }
+    @media (max-width: 860px){
+      .app{grid-template-columns: 1fr;}
+      .sidebar{display:none;}
+      .main{padding: 18px;}
+      .kpis{grid-template-columns: 1fr;}
+    }
+  
+    .decodedRow{
+      margin-top: 10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+    .decodedChip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.05);
+      border: 1px solid rgba(15,23,42,.08);
+      font-size: 12px;
+      font-weight: 900;
+      color: rgba(15,23,42,.78);
+      max-width: 100%;
+    }
+    .decodedChip .k{
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-weight: 950;
+      color: rgba(15,23,42,.42);
+    }
+    .decodedChip .v{
+      font-weight: 950;
+      color: rgba(15,23,42,.85);
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+    .decodedChip.vin .v{max-width: 300px;}
+    .decodedHint{
+      font-size: 11px;
+      font-weight: 850;
+      color: rgba(15,23,42,.55);
+      margin-left: 2px;
+    }
+
+    /* Appraisal Assist mode micro-upgrade */
+    .aaModeContext .state.internalCard{
+      opacity: .35;
+      filter: grayscale(.25);
+      transform: translateY(1px);
+    }
+    .aaModeContext .state.contextCard{
+      border-color: rgba(99,102,241,.30);
+      box-shadow: 0 18px 45px rgba(99,102,241,.14);
+      position: relative;
+    }
+    .aaModeContext .state.contextCard:before{
+      content:"";
+      position:absolute;
+      inset:-120px -90px auto auto;
+      width:220px;height:220px;
+      border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, rgba(99,102,241,.22), transparent 60%);
+      pointer-events:none;
+    }
+    .aaModePerformance .state.contextCard{
+      opacity:.65;
+    }
+
+    /* Tiny toast (demo confirmation) */
+    .oaToast{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9999;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(15,23,42,.92);
+      color: rgba(255,255,255,.95);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 18px 45px rgba(15,23,42,.22);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .02em;
+      display:none;
+      transform: translateY(8px);
+      opacity: 0;
+      transition: opacity .18s ease, transform .18s ease;
+      max-width: min(320px, calc(100vw - 36px));
+      pointer-events: none;
+    }
+    .oaToast.show{
+      display:block;
+      opacity: 1;
+      transform: translateY(0px);
+    }
+    .oaToast .muted{
+      color: rgba(255,255,255,.72);
+      font-weight: 800;
+      margin-left: 6px;
+    }
+
+    /* Demo disclaimer */
+    .demoDisclaimer{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9998;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(15,23,42,.12);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      color: rgba(15,23,42,.70);
+      box-shadow: 0 10px 24px rgba(15,23,42,.10);
+      pointer-events: none;
+    }
+    @media (max-width: 860px){
+      .demoDisclaimer{ right: 12px; bottom: 12px; }
+    }
+
+  </style>
 </head>
-<body class="oa">
-    <!-- iOS-style Command Center (FIX8d) -->
-    <section class="ios-dashboard" aria-label="Outcome AI Dashboard">
-      <div class="ios-header">
-        <div class="ios-brand">
-          <div class="ios-title">OUTCOME AI</div>
-          <div class="ios-sub">Status: <span class="ios-pill">Live Demo</span></div>
-        </div>
-        <div class="ios-dealer">
-          <div class="ios-dealer__name" id="dealerName">Dealer Name</div>
-          <div class="ios-dealer__meta">Login: <span id="loginStamp">—</span></div>
-        </div>
-      </div>
-
-      <!-- Operational (5) -->
-      <!-- Fallback gauges are rendered in HTML so the circles never disappear if JS fails to run. -->
-      <div class="ios-row ios-row--gauges ios-row--5" id="iosGaugesOperational">
-        <div class="ios-gaugeWrap" aria-label="Acquire Now (fallback)">
-          <div class="ios-gauge">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <circle cx="32" cy="32" r="29" stroke="rgba(15,23,42,0.12)" stroke-width="6" fill="none"></circle>
-              <circle cx="32" cy="32" r="29" stroke="rgba(255,90,90,0.92)" stroke-width="6" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
-            </svg>
-            <div class="ios-gauge__val">7</div>
-          </div>
-        </div>
-        <div class="ios-gaugeWrap" aria-label="Internal Supply (fallback)">
-          <div class="ios-gauge">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <circle cx="32" cy="32" r="29" stroke="rgba(15,23,42,0.12)" stroke-width="6" fill="none"></circle>
-              <circle cx="32" cy="32" r="29" stroke="rgba(255,190,90,0.92)" stroke-width="6" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
-            </svg>
-            <div class="ios-gauge__val">21</div>
-          </div>
-        </div>
-        <div class="ios-gaugeWrap" aria-label="External (fallback)">
-          <div class="ios-gauge">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <circle cx="32" cy="32" r="29" stroke="rgba(15,23,42,0.12)" stroke-width="6" fill="none"></circle>
-              <circle cx="32" cy="32" r="29" stroke="rgba(15,23,42,0.55)" stroke-width="6" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
-            </svg>
-            <div class="ios-gauge__val">5</div>
-          </div>
-        </div>
-        <div class="ios-gaugeWrap" aria-label="Capital at Risk (fallback)">
-          <div class="ios-gauge">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <circle cx="32" cy="32" r="29" stroke="rgba(15,23,42,0.12)" stroke-width="6" fill="none"></circle>
-              <circle cx="32" cy="32" r="29" stroke="rgba(255,90,90,0.92)" stroke-width="6" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
-            </svg>
-            <div class="ios-gauge__val">$53k</div>
-          </div>
-        </div>
-        <div class="ios-gaugeWrap" aria-label="Stop Buying (fallback)">
-          <div class="ios-gauge">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <circle cx="32" cy="32" r="29" stroke="rgba(15,23,42,0.12)" stroke-width="6" fill="none"></circle>
-              <circle cx="32" cy="32" r="29" stroke="rgba(255,190,90,0.92)" stroke-width="6" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
-            </svg>
-            <div class="ios-gauge__val">30</div>
-          </div>
-        </div>
-      </div>
-      <div class="ios-row ios-row--widgets ios-row--5" id="iosWidgetsOperational">
-        <button class="board-col board-col--neutral js-board-col" data-col="acquire_now">
-          <div class="board-col__label">ACQUIRE NOW</div>
-          <div class="board-col__value js-acquireNowValue">8</div>
-          <div class="acq-rows" aria-label="Acquire Now tile details">
-  <div class="acq-row">
-    <div class="acq-ico">⏳</div>
-    <div class="acq-label">Window</div>
-    <div class="acq-value"><strong id="acqTileWindowAmt">$1,300</strong> <span id="acqTileWindowTxt">at risk</span></div>
-  </div>
-  <div class="acq-row">
-    <div class="acq-ico">💡</div>
-    <div class="acq-label">Insight</div>
-    <div class="acq-value" id="acqTileInsight">7 demand matches</div>
-  </div>
-  <div class="acq-row">
-    <div class="acq-ico">🛡️</div>
-    <div class="acq-label">Why</div>
-    <div class="acq-value" id="acqTileWhy">Delay erodes pricing</div>
-  </div>
-</div>
-        </button>
-
-        <button class="board-col board-col--neutral js-board-col" data-col="internal_supply">
-          <div class="board-col__label">INTERNAL SUPPLY</div>
-          <div class="board-col__value js-internalSupplyValue">21</div>
-          <div class="board-col__coi" id="coiMicro-internal_supply">5 internal matches aging</div>
-          <div class="ios-widget__meta">
-            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v js-internal_supply-insight">5 matches inside your store</span></div>
-            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v js-internal_supply-why">Internal sourcing is fastest gross</span></div>
-          </div>
-        </button>
-
-        <button class="board-col board-col--neutral js-board-col" data-col="external">
-          <div class="board-col__label">EXTERNAL</div>
-          <div class="board-col__value js-externalValue">5</div>
-          <div class="board-col__coi" id="coiMicro-external">Sources tagged (Partner/Buy Bid/Auction)</div>
-          <div class="ios-widget__meta">
-            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v js-external-insight">Partner feed surfaced 5 matches</span></div>
-            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v js-external-why">Best fits outside your inventory</span></div>
-          </div>
-        </button>
-
-        <button class="board-col board-col--neutral js-board-col" data-col="capital_risk">
-          <div class="board-col__label">CAPITAL AT RISK</div>
-          <div class="board-col__value js-capitalRiskValue">$53k</div>
-          <div class="board-col__coi" id="coiMicro-capital_risk">2 units driving risk</div>
-          <div class="ios-widget__meta">
-            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v js-capital_risk-insight">2 units driving the risk total</span></div>
-            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v js-capital_risk-why">Aging drains gross quietly</span></div>
-          </div>
-        </button>
-
-        <button class="board-col board-col--neutral js-board-col" data-col="stop_buying">
-          <div class="board-col__label">STOP BUYING</div>
-          <div class="board-col__value js-stopBuyingValue">30</div>
-          <div class="board-col__coi" id="coiMicro-stop_buying">Overstock pressure rising</div>
-          <div class="ios-widget__meta">
-            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v js-stop_buying-insight">Overstock building in 2 segments</span></div>
-            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v js-stop_buying-why">Stop stacking the same risk</span></div>
-          </div>
-        </button>
-      </div>
-
-      <!-- Today’s Focus (3) -->
-      <!-- Fallback gauges are rendered in HTML so the circles never disappear if JS fails to run. -->
-      <div class="ios-row ios-row--gauges ios-row--3" id="iosGaugesFocus">
-        <div class="ios-gaugeWrap" aria-label="Approaching Escalation (fallback)">
-          <div class="ios-gauge ios-gauge--lg">
-            <svg viewBox="0 0 88 88" aria-hidden="true">
-              <circle cx="44" cy="44" r="40" stroke="rgba(15,23,42,0.12)" stroke-width="8" fill="none"></circle>
-              <circle cx="44" cy="44" r="40" stroke="rgba(15,23,42,0.55)" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
-            </svg>
-            <div class="ios-gauge__val">$0</div>
-          </div>
-        </div>
-        <div class="ios-gaugeWrap" aria-label="Cost of Inaction (fallback)">
-          <div class="ios-gauge ios-gauge--lg">
-            <svg viewBox="0 0 88 88" aria-hidden="true">
-              <circle cx="44" cy="44" r="40" stroke="rgba(15,23,42,0.12)" stroke-width="8" fill="none"></circle>
-              <circle cx="44" cy="44" r="40" stroke="rgba(255,190,90,0.92)" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
-            </svg>
-            <div class="ios-gauge__val">$0</div>
-          </div>
-        </div>
-        <div class="ios-gaugeWrap" aria-label="Resolved Today (fallback)">
-          <div class="ios-gauge ios-gauge--lg">
-            <svg viewBox="0 0 88 88" aria-hidden="true">
-              <circle cx="44" cy="44" r="40" stroke="rgba(15,23,42,0.12)" stroke-width="8" fill="none"></circle>
-              <circle cx="44" cy="44" r="40" stroke="rgba(15,23,42,0.55)" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="0 999"></circle>
-            </svg>
-            <div class="ios-gauge__val">$0</div>
-          </div>
-        </div>
-      </div>
-      <div class="ios-row ios-row--widgets ios-row--3" id="iosWidgetsFocus">
-        <button class="board-col board-col--neutral js-focus-widget" data-focus="approaching_escalation">
-          <div class="board-col__label">APPROACHING ESCALATION</div>
-          <div class="board-col__value">$0</div>
-          <div class="board-col__count">Count: <span class="js-focusCount-approaching">0</span></div>
-          <div class="ios-widget__meta">
-            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v">Silence window closing</span></div>
-            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v">Unacknowledged items escalate</span></div>
-          </div>
-        </button>
-
-        <button class="board-col board-col--neutral js-focus-widget" data-focus="cost_inaction">
-          <div class="board-col__label">COST OF INACTION</div>
-          <div class="board-col__value">$8,100</div>
-          <div class="ios-widget__meta">
-            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v">High-value opportunities aging silently</span></div>
-            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v">Unaddressed decisions disappear</span></div>
-          </div>
-        </button>
-
-        <button class="board-col board-col--neutral js-focus-widget" data-focus="resolved_today">
-          <div class="board-col__label">RESOLVED TODAY</div>
-          <div class="board-col__value">$0</div>
-          <div class="board-col__count">Count: <span class="js-focusCount-resolved">0</span></div>
-          <div class="ios-widget__meta">
-            <div class="ios-widget__insight"><span class="ios-k">Insight:</span> <span class="ios-v">Opportunities acknowledged and handled</span></div>
-            <div class="ios-widget__why"><span class="ios-k">Why:</span> <span class="ios-v">Handled beats perfect</span></div>
-          </div>
-        </button>
-      </div>
-    </section>
-    <!-- /iOS-style Command Center (FIX8d) -->
-    
+<body>
   <div class="app">
 
-    <header class="topbar">
-      <div class="topbar__left">
-        <img class="brand-mark" src="assets/outcome_o_white_red_transparent.png" alt="Outcome AI" />
-        
-        <div class="brand-word">Outcome AI</div>
-      </div>
-
-      <div class="topbar__center">
-        Capital judgment for acquisition decisions — calm, fast, final.
-      </div>
-
-      <div class="topbar__right">
-        <div class="dealer">
-          <div class="dealer__label">Dealer</div>
-          <input class="dealer__input js-dealerName" type="text" value="Demo Dealer" aria-label="Dealer name" />
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brandMark"></div>
+        <div>
+          <div class="brandTitle">Outcome AI</div>
+          <div class="brandSub">Decision Intelligence</div>
         </div>
       </div>
-    </header>
-    <div class="statusbar">
-      <div class="statusbar__left">Status: <span class="dot dot--ok"></span> Live Demo</div>
-      <div class="statusbar__right">Login: <span class="js-loginStamp">—</span></div>
-    </div>
 
+      <div class="search">
+        <span class="icon">⌕</span>
+        <input placeholder="Search VIN, stock #, Y/M/M/T, insight…" />
+      </div>
+
+      <div class="menuLabel">Main</div>
+      <nav class="nav">
+        <a class="active" href="#" data-action="nav-dashboard"><span class="nIco">▦</span>Dashboard</a>
+        <a href="#" data-action="open-acquire"><span class="nIco">⚡</span>Acquire</a>
+        <a href="#" data-action="open-stop"><span class="nIco">⛔</span>Stop Buying</a>
+        <a href="#" data-action="open-capital"><span class="nIco">💰</span>Capital</a>
+        <a href="#" data-action="open-appraisal"><span class="nIco">🧠</span>Appraisal Assist</a>
+        <a href="#" data-action="open-insights"><span class="nIco">✨</span>Insights</a>
+        <a href="#"><span class="nIco">⚙</span>Settings</a>
+      </nav>
+
+      <div class="sidebarFooter">
+        <div class="user">
+          <div class="avatar"></div>
+          <div class="userMeta">
+            <div class="userName">Demo Ford Store</div>
+            <div class="userRole">Demo environment • Read-only</div>
+          </div>
+        </div>
+        <div class="settingsBtn" title="Refresh (mock)">⟲</div>
+      </div>
+    </aside>
+
+    <!-- Main -->
     <main class="main">
-  <section class="board" aria-label="Decision Board">
-    <div class="board__grid board__grid--3">
-      <div class="board__nav" aria-label="Decision Tiles">
-        <div class="board__frame board__frame--vertical">
-
-
-          <button class="board-col board-col--success js-board-col" data-col="acquire_now" aria-expanded="false">
-            <div class="board-col__label">ACQUIRE NOW</div>
-            <div class="board-col__value js-acquireNowValue">—</div>
-          
-            <div class="board-col__coi" id="coiMicro-acquire_now" aria-label="Cost of inaction micro">⏱ <span class="board-col__coiVal">—</span></div>
-</button>
-
-          <button class="board-col board-col--warn js-board-col" data-col="internal_supply" aria-expanded="false">
-            <div class="board-col__label">INTERNAL SUPPLY</div>
-            <div class="board-col__value js-internalSupplyValue">—</div>
-          
-            <div class="board-col__coi" id="coiMicro-internal_supply" aria-label="Cost of inaction micro">⏱ <span class="board-col__coiVal">—</span></div>
-</button>
-
-          <button class="board-col board-col--warn js-board-col" data-col="external" aria-expanded="false">
-            <div class="board-col__label">EXTERNAL</div>
-            <div class="board-col__value js-externalValue">—</div>
-          
-            <div class="board-col__coi" id="coiMicro-external" aria-label="Cost of inaction micro">⏱ <span class="board-col__coiVal">—</span></div>
-</button>
-
-          <button class="board-col board-col--danger js-board-col" data-col="capital_risk" aria-expanded="false">
-            <div class="board-col__label">CAPITAL AT RISK</div>
-            <div class="board-col__value js-capitalRiskValue">—</div>
-            <div class="board-col__micro js-capitalRiskDelta" hidden>
-              <span class="delta delta--down js-capitalRiskArrow">↓</span>
-              <span class="delta__text js-capitalRiskDeltaText">—</span>
-            </div>
-          
-            <div class="board-col__coi" id="coiMicro-capital_risk" aria-label="Cost of inaction micro">⏱ <span class="board-col__coiVal">—</span></div>
-</button>
-
-          <button class="board-col board-col--danger js-board-col" data-col="stop_buying" aria-expanded="false">
-            <div class="board-col__label">STOP BUYING</div>
-            <div class="board-col__value js-stopBuyingValue">—</div>
-          
-            <div class="board-col__coi" id="coiMicro-stop_buying" aria-label="Cost of inaction micro">⏱ <span class="board-col__coiVal">—</span></div>
-</button>
-
-
+      <div class="topbar">
+        <div class="titleBlock">
+          <div class="h1">Command Center</div>
+          <div class="meta">
+            <span class="pill"><span class="dot"></span> Demo • Representative data</span>
+            <span class="pill"><span id="meta-updated">Updated: 2 min ago</span></span>
+            <span class="pill"><span id="meta-store">Store: Ford • 60 units</span></span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn" type="button">⬆︎ Import</button>
+          <button class="btn primary" type="button">＋ New Insight</button>
         </div>
       </div>
 
-      <div class="board__center" aria-label="Selected Tile Details">
-<section class="drawer js-drawer" data-open="false" aria-label="Decision Detail">
-  <div class="drawer__header">
-    <div class="drawer__headLeft">
-      <div class="drawer__title js-drawerTitle">Select a column</div>
-      <div class="drawer__subtitle js-drawerSubtitle">Click a decision tile to load the priority list.</div>
-    </div>
+      <!-- KPI Cards -->
+      <section class="kpis">
 
-    <div class="drawer__headRight">
-      <div class="chip js-reconChip" hidden title="Based on close-rate &amp; gross realism (store average).">
-        Recon Reality <span class="chip__value js-reconValue">—</span>
-      </div>
-      <button class="drawer__close js-drawerClose" type="button" aria-label="Close details">×</button>
-      <button class="drawer__collapse js-drawerCollapse" type="button" aria-label="Collapse details">–</button>
-    </div>
-  </div>
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">Acquire Now</div>
+            <div class="badge">↑ demand signal</div>
+          </div>
+          <div class="cardValue">
+            <div class="bigNum"><span id="kpi-acquire-count">7</span></div>
+            <div class="subNum">high-confidence matches in your market</div>
+          </div>
+          <div class="cardLine">
+            <span class="chip">⏳ <strong>$6,300</strong> cost of inaction</span>
+            <span class="chip">🛡️ Buy-window is closing</span>
+          </div>
+          <div class="cta">
+            <a class="link" href="#" data-action="open-acquire">View matches →</a>
+            <span class="hint">Intel first. Action second.</span>
+          </div>
+        </div>
 
-  <div class="drawer__body">
-    <div class="toggle js-internalToggle" hidden>
-      <button class="toggle__btn is-active js-toggle" data-view="service">Service</button>
-      <button class="toggle__btn js-toggle" data-view="appraisals">Live Appraisals</button>
-      <button class="toggle__btn is-disabled" disabled>Previously Sold</button>
-    </div>
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">Stop Buying</div>
+            <div class="badge negative">↑ risk</div>
+          </div>
+          <div class="cardValue">
+            <div class="bigNum"><span id="kpi-stop-count">30</span></div>
+            <div class="subNum">units stacking risk if you keep feeding it</div>
+          </div>
+          <div class="cardLine">
+            <span class="chip">⛔ <span id="kpi-stop-segments">2</span> segments oversupplied</span>
+            <span class="chip">📉 Gross compression trend</span>
+          </div>
+          <div class="cta">
+            <a class="link" href="#" data-action="open-stop">See segments →</a>
+            <span class="hint">Stop the bleed early.</span>
+          </div>
+        </div>
 
-    <div class="table-wrap js-tableWrap">
-      <table class="table">
-        <thead class="js-tableHead">
-          <tr>
-            <th>Profile</th>
-            <th>Reason</th>
-            <th class="right">Confidence</th>
-          </tr>
-        </thead>
-        <tbody class="js-tableBody">
-          <tr>
-            <td colspan="3" class="muted">No details yet. Click a Decision tile on the left.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">Expected Gross at Risk</div>
+            <div class="badge neutral">quiet leak</div>
+          </div>
+          <div class="cardValue">
+            <div class="bigNum"><span id="kpi-capital-amount">$53,771</span></div>
+            <div class="subNum">gross exposed in inventory</div>
+          </div>
+          <div class="cardLine">
+            <span class="chip">⚠️ <strong><span id="kpi-capital-offenders">2</span></strong> units driving most exposure</span>
+            <span class="chip">🧊 Aging drains margin</span>
+          </div>
+          <div class="cta">
+            <a class="link" href="#" data-action="open-capital">Show offenders →</a>
+            <span class="hint">Protect gross, fast.</span>
+          </div>
+        </div>
 
-      </div>
+        <!-- Insights Preview card (right column) -->
+        <div class="card insightsCard">
+          <div class="insightsHeader">
+            <div>
+              <div class="h">Insights</div>
+              <div class="s">Signals you can act on this week</div>
+            </div>
+            <div class="badge neutral">Top 10</div>
+          </div>
 
-      <div class="board__side" aria-label="Pressure Column">
-<section class="cie cie--compact" aria-label="Cost of Inaction">
-              <div class="cie__head">
+          <div class="insightList">
+            <div class="insightItem">
+              <div class="rank">1</div>
+              <div class="insText">
+                <div class="insTitle">F-150 XLT 302A: peak demand window</div>
+                <div class="insSub">
+                  <span class="tag">+$2,900 avg edge</span>
+                  <span class="tag">Turn: ~21 days</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="insightItem">
+              <div class="rank">2</div>
+              <div class="insText">
+                <div class="insTitle">Explorer XLT: oversupply building</div>
+                <div class="insSub">
+                  <span class="tag">Stop buying</span>
+                  <span class="tag">Gross compression</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="insightItem">
+              <div class="rank">3</div>
+              <div class="insText">
+                <div class="insTitle">Capital risk concentrated in 2 units</div>
+                <div class="insSub">
+                  <span class="tag">$18k exposure</span>
+                  <span class="tag">Aging cliff</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+            <a class="link" href="#" style="padding:8px 10px;" data-action="open-insights">Open insights →</a>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Main content grid -->
+      <section class="grid">
+
+        <!-- Left: Intelligence (chart + feed) -->
+        <div class="panel">
+          <div class="panelHead">
+            <div>
+              <div class="panelTitle">Intelligence Overview</div>
+              <div class="panelSub">Demand, supply, and aging pressure — the stuff that moves profit.</div>
+            </div>
+            <div class="range">Last 30 days ▾</div>
+          </div>
+
+          <div class="chart">
+            <div class="chartTop">
+              <div class="legend">
+                <span class="lg"><span class="sw a"></span> Demand Strength</span>
+                <span class="lg"><span class="sw b"></span> Aging Pressure</span>
+              </div>
+              <div class="range">Segment: Trucks ▾</div>
+            </div>
+
+            <div class="svgWrap">
+              <!-- Static decorative chart (no JS) -->
+              <svg viewBox="0 0 900 240" preserveAspectRatio="none" aria-label="Chart mock">
+                <defs>
+                  <linearGradient id="g1" x1="0" x2="1">
+                    <stop offset="0" stop-color="rgba(139,92,246,.85)"/>
+                    <stop offset="1" stop-color="rgba(99,102,241,.75)"/>
+                  </linearGradient>
+                  <linearGradient id="g2" x1="0" x2="1">
+                    <stop offset="0" stop-color="rgba(239,68,68,.55)"/>
+                    <stop offset="1" stop-color="rgba(239,68,68,.35)"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- grid lines -->
+                <g opacity=".22" stroke="rgba(15,23,42,.30)" stroke-width="1">
+                  <line x1="0" y1="40" x2="900" y2="40"/>
+                  <line x1="0" y1="90" x2="900" y2="90"/>
+                  <line x1="0" y1="140" x2="900" y2="140"/>
+                  <line x1="0" y1="190" x2="900" y2="190"/>
+                </g>
+
+                <!-- demand -->
+                <path d="M0,160 C110,40 210,60 300,120 C380,175 470,190 560,110 C650,40 740,70 900,50"
+                      fill="none" stroke="url(#g1)" stroke-width="6" stroke-linecap="round"/>
+                <!-- aging -->
+                <path d="M0,90 C120,140 220,160 300,120 C380,80 460,60 560,100 C680,150 760,170 900,140"
+                      fill="none" stroke="url(#g2)" stroke-width="4" stroke-linecap="round"/>
+
+                <!-- focus point -->
+                <circle cx="560" cy="110" r="7" fill="rgba(99,102,241,.95)"/>
+                <circle cx="560" cy="110" r="16" fill="rgba(99,102,241,.18)"/>
+              </svg>
+
+              <div class="axisLabel">
+                <span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feed">
+            <div class="feedItem">
+              <div class="feedIcon">⚡</div>
+              <div class="feedMain">
+                <div class="feedTitle">Acquire signal: F-150 XLT 302A exits faster than peer average.</div>
+                <div class="feedDesc">Outcome found repeatable front gross when bought under your guardrails — this is an “Acquire Now” profile.</div>
+                <div class="feedMeta">
+                  <span class="pillMini money">+$2,900 avg edge</span>
+                  <span class="pillMini">Turn &lt; ~21 days</span>
+                  <span class="pillMini">Confidence: High</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="feedItem">
+              <div class="feedIcon">⛔</div>
+              <div class="feedMain">
+                <div class="feedTitle">Stop signal: oversupply is building in 2 segments.</div>
+                <div class="feedDesc">Outcome detects patterns that historically compress gross once inventory crosses the 30–45 day zone.</div>
+                <div class="feedMeta">
+                  <span class="pillMini risk">Risk rising</span>
+                  <span class="pillMini">Aging cliff: 30–45 days</span>
+                  <span class="pillMini">Confidence: Medium</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="feedItem">
+              <div class="feedIcon">💰</div>
+              <div class="feedMain">
+                <div class="feedTitle">Capital risk: 2 units are driving most of your exposure.</div>
+                <div class="feedDesc">Outcome flags the offenders where gross erodes fastest as days-in-stock climbs — fix these first.</div>
+                <div class="feedMeta">
+                  <span class="pillMini money">$53,771 exposed</span>
+                  <span class="pillMini">2 offenders</span>
+                  <span class="pillMini">Confidence: High</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Appraisal Assist (context engine) -->
+        <div class="panel">
+          <div class="panelHead">
+            <div>
+              <div class="panelTitle">Appraisal Assist</div>
+              <div class="panelSub">Appraise in your tool. Check Outcome for context + performance.</div>
+            </div>
+            <div class="range">Recon Reality ▾</div>
+          </div>
+
+          <div id="aaPanel" class="aaBox aaModePerformance">
+            <div class="aaHero">
+              <div class="aaTitle">
+                <div class="t">Lookup vehicle context</div>
+                <div class="c">VIN / Y-M-M-T</div>
+              </div>
+              <div class="aaSearch">
+                <span style="color:var(--muted2)">⌕</span>
+                <input id="aaInput" placeholder="e.g., 2021 Ford F-150 XLT 302A or VIN…" />
+                <button class="pill" style="padding:6px 10px; border:0; cursor:pointer;" data-action="aa-analyze">Analyze</button>
+                <button class="btn" style="padding:6px 10px; box-shadow:none;" data-action="aa-clear">Clear</button>
+              </div>
+              <div id="aaDecoded" class="decodedRow" style="display:none;"></div>
+              <div class="aaHint">
+                If you’ve never owned it, Outcome does <strong>Context Mode</strong>:
+                peer-based signals, market guardrails, and a confidence score — <strong>not</strong> a blank screen.
+              </div>
+            </div>
+
+            <!-- State: Has Internal Data -->
+            <div class="state internalCard">
+              <div class="stateHead">
                 <div>
-                  <h2 class="cie__title">Cost of Inaction</h2>
-                  <p class="cie__sub">Preventable loss from surfaced opportunities</p>
+                  <div class="stateName">Internal History Found</div>
+                  <div class="stateSub">Outcome detected prior ownership + store-specific performance trends.</div>
                 </div>
-                <div class="cie__pill" title="Records are immutable">Immutable Record</div>
+                <div class="badge">High confidence</div>
               </div>
 
-              <div class="cie__summary">
-                <div class="cie__card">
-                  <div class="cie__label">Preventable Loss (30 Days)</div>
-                  <div class="cie__value" id="cieLoss">—</div>
-                  <div class="cie__meta" id="cieLossDelta">—</div>
+              <div class="kvRow">
+                <span>Repeatable front gross</span>
+                <span><strong>+$2,900</strong> avg</span>
+              </div>
+              <div class="kvRow" style="border-top:0;padding-top:8px;">
+                <span>Typical turn</span>
+                <span><strong>~21 days</strong></span>
+              </div>
+              <div class="confidence">
+                <div class="meter"><div class="bar" style="width:72%"></div></div>
+                <div class="confText">72%</div>
+              </div>
+            </div>
+
+            <!-- State: Zero Internal Data -->
+            <div class="state contextCard">
+              <div class="stateHead">
+                <div>
+                  <div class="stateName">No Internal History</div>
+                  <div class="stateSub">You haven’t owned this profile. Outcome switches to peer + market intelligence.</div>
                 </div>
-                <div class="cie__card">
-                  <div class="cie__label">Loss Avoided</div>
-                  <div class="cie__value" id="cieAvoided">—</div>
-                  <div class="cie__meta">Captured</div>
-                </div>
-                <div class="cie__card">
-                  <div class="cie__label">Escalating Items</div>
-                  <div class="cie__value" id="cieEscCount">—</div>
-                  <div class="cie__meta">Threshold soon</div>
-                </div>
-                <div class="cie__card">
-                  <div class="cie__label">Next Escalation</div>
-                  <div class="cie__value cie__mono" id="cieNextEsc">—</div>
-                  <div class="cie__meta">Highest impact</div>
-                </div>
+                <div class="badge neutral">Context mode</div>
               </div>
 
-              <div class="cie__exposure">
-                <div class="cie__exposureTop">
-                  <div class="cie__label">Inaction Exposure (Rolling 30 Days)</div>
-                  <div class="cie__meta" id="cieExposureNote">Exposure rising from unaddressed items</div>
+              <div class="kvRow">
+                <span>Market guardrails</span>
+                <span><strong>Max Buy</strong> + Turn</span>
+              </div>
+              <div class="kvRow" style="border-top:0;padding-top:8px;">
+                <span>Peer outcomes</span>
+                <span><strong>Comparable dealers</strong></span>
+              </div>
+              <div class="confidence">
+                <div class="meter">
+                  <div class="bar" style="width:54%; background: linear-gradient(90deg, rgba(245,158,11,.95), rgba(59,130,246,.75));"></div>
                 </div>
-                <div class="cie__barWrap" role="img" aria-label="Inaction exposure bar">
-                  <div class="cie__barMarkers">
-                    <span>Monitor</span>
-                    <span>At Risk</span>
-                    <span>Escalating</span>
-                  </div>
-                  <div class="cie__bar">
-                    <div class="cie__barCover" id="cieBarFill" style="width: 0%"></div>
-                    <div class="cie__barKnob" id="cieBarKnob" style="left: 0%"></div>
-                    <div class="cie__tick" style="left: 33%"></div>
-                    <div class="cie__tick" style="left: 66%"></div>
-                  </div>
-                </div>
+                <div class="confText">54%</div>
               </div>
+            </div>
 
-              <div class="cie__footer cie__footer--compact">
-                <button class="cie__btnSecondary" id="openLedgerBtn" type="button">View Ignored Opportunity Ledger →</button>
-                <div class="cie__footNote">Exposure and escalation are threshold-based.</div>
-              </div>
-            </section>
-<section class="approachPanel" aria-label="Approaching Escalation">
-              <div class="approachPanel__head">
-                <h3 class="approachPanel__title" data-tip="Items that will escalate if nobody touches them. Escalation is visibility—not blame.">Approaching Escalation</h3>
-                <div class="approachPanel__meta">Items will escalate based on time/value thresholds.</div>
-              </div>
-              <div class="approachPanel__rows" id="cieRowsRight"></div>
-            </section>
+            <div style="display:flex; gap:10px;">
+              <a class="link" href="#" style="flex:1; justify-content:center;" data-action="open-appraisal">Open Appraisal Assist →</a>
+              <button class="btn" type="button" style="flex:1; justify-content:center;"><button class="btn" data-action="open-guardrails" style="flex:1; justify-content:center;">View guardrails</button>
+            </div>
+          </div>
+        </div>
 
-            <section class="coiDash" aria-label="Cost of Inaction Dashboard Extensions">
-              <div class="coiDash__module" id="attentionFlow">
-                <div class="coiDash__head">
-                  <h3 class="coiDash__title">Attention Flow</h3>
-                  <div class="coiDash__meta">Where delay is becoming expensive</div>
-                </div>
-                <div class="coiDash__rows" id="attentionFlowList" aria-label="Attention Flow Items"></div>
-              </div>
+      </section>
+    </main>
+  </div>
 
-              <div class="coiDash__module" id="agedToday">
-                <div class="coiDash__head">
-                  <h3 class="coiDash__title">Aged Today</h3>
-                  <div class="coiDash__meta">Opportunities that crossed a threshold today</div>
-                </div>
-                <div class="coiDash__rows" id="agedTodayList" aria-label="Aged Today Items"></div>
-              </div>
-
-              <div class="coiDash__module" id="resolvedToday">
-                <div class="coiDash__head">
-                  <h3 class="coiDash__title">Resolved Today</h3>
-                  <div class="coiDash__meta">What didn’t slip</div>
-                </div>
-                <div class="coiDash__rows" id="resolvedTodayList" aria-label="Resolved Today Items"></div>
-              </div>
-
-              <div class="coiDash__belief" title="Outcome AI principle">Silence is not neutral.</div>
-            </section>
-
-
+  <!-- Outcome V1 Demo Modal -->
+  <div id="oa-modal" style="display:none; position:fixed; inset:0; z-index:9999;">
+    <div id="oa-modal-backdrop" style="position:absolute; inset:0; background:rgba(15,23,42,.45); backdrop-filter: blur(4px);"></div>
+    <div style="position:relative; max-width: 1320px; width: min(1320px, 96vw); margin: 6vh auto; padding: 0 16px;">
+      <div style="background: var(--panel); border:1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 70px rgba(15,23,42,.22); overflow:hidden;" max-height:80vh; display:flex; flex-direction:column;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 14px 16px; border-bottom:1px solid var(--line);">
+          <div style="min-width:0;">
+            <div id="oa-modal-title" style="font-weight:950; letter-spacing:-0.02em; font-size: 15px;">Modal</div>
+            <div id="oa-modal-sub" style="margin-top:2px; color: var(--muted); font-size: 12px; font-weight: 700;"></div>
+          </div>
+          <button id="oa-modal-close" class="btn" style="padding: 10px 12px;">Close ✕</button>
+        </div>
+        <div id="oa-modal-body" style="padding: 14px 16px 16px; flex:1; max-height: calc(80vh - 64px); overflow:auto;"></div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <div class="ledger" id="ledger" aria-hidden="true">
-          <div class="ledger__backdrop" id="ledgerBackdrop"></div>
-          <aside class="ledger__panel" role="dialog" aria-modal="true" aria-label="Ignored Opportunity Ledger">
-            <div class="ledger__head">
-              <div>
-                <h2 class="ledger__title">Ignored Opportunity Ledger</h2>
-                <p class="ledger__sub">Immutable record of surfaced opportunities that expired or escalated without action</p>
-              </div>
-              <button class="ledger__close" id="closeLedgerBtn" aria-label="Close ledger">✕</button>
-            </div>
+  <script src="demo-data.js"></script>
+  <script src="app.js"></script>
 
-            <div class="ledger__filters">
-              <select class="ledger__select" id="ledgerRange">
-                <option value="30">Last 30 days</option>
-                <option value="7">Last 7 days</option>
-                <option value="60">Last 60 days</option>
-              </select>
-              <select class="ledger__select" id="ledgerType">
-                <option value="all">All Opportunity Types</option>
-                <option value="Acquire Now">Acquire Now</option>
-                <option value="Internal Supply">Internal Supply</option>
-                <option value="Capital at Risk">Capital at Risk</option>
-                <option value="Stop Buying">Stop Buying</option>
-              </select>
-              <select class="ledger__select" id="ledgerDept">
-                <option value="all">All Departments</option>
-                <option value="Used">Used</option>
-                <option value="New">New</option>
-                <option value="Service">Service</option>
-              </select>
-              <select class="ledger__select" id="ledgerStatus">
-                <option value="all">All Statuses</option>
-                <option value="Expired">Expired</option>
-                <option value="Escalated">Escalated</option>
-                <option value="Dismissed">Dismissed</option>
-              </select>
-              <div class="ledger__immutable">Records cannot be edited or removed</div>
-            </div>
+  <div id="oaToast" class="oaToast" aria-live="polite" aria-atomic="true"></div>
+  <div class="demoDisclaimer">Demo environment — representative data for illustration.</div>
 
-            <div class="ledger__kpis">
-              <div class="ledger__kpi">
-                <div class="ledger__kLabel">Preventable Loss</div>
-                <div class="ledger__kVal" id="ledgerLoss">—</div>
-              </div>
-              <div class="ledger__kpi">
-                <div class="ledger__kLabel">% Escalated Before Expiry</div>
-                <div class="ledger__kVal" id="ledgerEscPct">—</div>
-              </div>
-              <div class="ledger__kpi">
-                <div class="ledger__kLabel">Avg Days Unaddressed</div>
-                <div class="ledger__kVal" id="ledgerAvgDays">—</div>
-              </div>
-              <div class="ledger__kpi">
-                <div class="ledger__kLabel">Most Common Category</div>
-                <div class="ledger__kVal" id="ledgerTopCat">—</div>
-              </div>
-            </div>
-
-            <div class="ledger__tableWrap">
-              <table class="ledger__table">
-                <thead>
-                  <tr>
-                    <th>Date Surfaced</th>
-                    <th>Opportunity Type</th>
-                    <th>Dept</th>
-                    <th>Owner</th>
-                    <th>Estimated Gross (Range)</th>
-                    <th>Days Unaddressed</th>
-                    <th>Status</th>
-                    <th>Recorded Preventable Loss</th>
-                    <th>Escalated</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody id="ledgerBody"></tbody>
-              </table>
-            </div>
-
-            <div class="ledgerDetail" id="ledgerDetail" aria-hidden="true">
-              <div class="ledgerDetail__head">
-                <div class="ledgerDetail__title">Opportunity Details</div>
-                <button class="ledgerDetail__close" id="closeDetailBtn" aria-label="Close details">✕</button>
-              </div>
-              <div class="ledgerDetail__content" id="ledgerDetailContent"></div>
-            </div>
-          </aside>
-        </div>
-</main>
-
-
-
-    <div class="modal js-modal" data-open="false" aria-hidden="true">
-      <div class="modal__backdrop js-modalClose"></div>
-      <div class="modal__panel" role="dialog" aria-modal="true" aria-label="Vehicle detail">
-        <div class="modal__head">
-          <div>
-            <div class="modal__title js-modalTitle">Vehicle Detail</div>
-            <div class="modal__sub js-modalSub">—</div>
-          </div>
-          <button class="modal__x js-modalClose" aria-label="Close">✕</button>
-        </div>
-        <div class="modal__body">
-          <div class="modal__grid">
-            <div class="card">
-              <div class="card__k">Where to find it</div>
-              <div class="card__v js-modalWhere">—</div>
-              <div class="card__note js-modalWhereNote muted">—</div>
-            </div>
-            <div class="card">
-              <div class="card__k">Risk-adjusted Max Buy</div>
-              <div class="card__v js-modalMaxBuy">—</div>
-              <div class="card__note muted js-modalMaxBuyNote">Buying above this price materially increases downside risk.</div>
-            </div>
-            <div class="card">
-              <div class="card__k">Next best action</div>
-              <div class="card__v js-modalAction">—</div>
-              <div class="card__note muted">One click to move it forward.</div>
-            </div>
-          </div>
-
-          <div class="modal-actions js-modalActions">
-            <div class="modal-actions__hdr">Immediate Action Required</div>
-            <button class="btn btn--primary js-modalCall" type="button">Call / Text Customer</button>
-            <button class="btn btn--ghost js-modalAdvisor" type="button">Notify Advisor</button>
-            <button class="btn btn--ghost js-modalOffer" type="button">Open CRM Record</button>
-          </div>
-
-          <div class="modal__tableWrap">
-            <div class="section-title js-modalMatchesTitle" style="margin-top:14px;">Matches inside your store</div>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Vehicle</th>
-                  <th>Source</th>
-                  <th>Customer</th>
-                  <th class="right">When</th>
-                </tr>
-              </thead>
-              <tbody class="js-modalMatches">
-                <tr><td colspan="4" class="muted">No internal matches.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-
-    <aside class="dock" data-open="false">
-      <button class="dock__tab js-dockToggle" data-dock="assist" aria-label="Open Appraisal Assist">
-        <span class="dock__tabText">Appraisal Assist</span>
-      </button>
-
-      <button class="dock__tab dock__tab--insights js-dockToggle" data-dock="insights" aria-label="Open Insights">
-        <span class="dock__tabText">Insights</span>
-      </button>
-
-      <div class="dock__panel dock__panel--assist" role="region" aria-label="Appraisal Assist Panel">
-        <div class="dock__header">
-          <div class="dock__title">Appraisal Assist</div>
-          <button class="dock__close js-dockClose" aria-label="Close">✕</button>
-        </div>
-
-        <div class="dock__body">
-          <label class="field">
-            <span class="field__label">VIN</span>
-            <input class="field__input js-vinInput" maxlength="17" placeholder="Paste VIN (17 characters)" />
-          </label>
-
-          <div class="status js-vinStatus">Paste a VIN to start.</div>
-          <div class="dock-actions">
-            <button class="btn btn--ghost js-clearVin" type="button">Clear</button>
-          </div>
-
-          <div class="align js-align" hidden>
-            <div class="align__label">Aligns with</div>
-            <div class="align__value js-alignValue">—</div>
-          </div>
-
-          <div class="trim js-trim" hidden>
-            <div class="trim__label">Select Trim</div>
-            <select class="trim__select js-trimSelect"></select>
-            <div class="trim__note muted">
-              Choose the exact trim to preserve value sensitivity (e.g., Tremor vs non-Tremor).
-            </div>
-          </div>
-
-          <div class="section-title">Deal Math</div>
-          <div class="deal-math__note muted">Outcome backs into the deal the same way a disciplined buyer does—starting with realistic retail, subtracting frontline cost, protecting front-end gross, and applying a confidence buffer.</div>
-
-          <div class="deal-math">
-            <div class="kv">
-              <div class="kv__k">Expected Retail</div>
-              <div class="kv__v js-retail">—</div>
-            </div>
-            <div class="kv">
-              <div class="kv__k">Recon Estimate</div>
-              <div class="kv__v js-reconEst">—</div>
-            </div>
-            <div class="kv">
-              <div class="kv__k">Target Front Gross</div>
-              <div class="kv__v js-targetGross">—</div>
-            </div>
-            <div class="kv">
-              <div class="kv__k">Pack / Fees</div>
-              <div class="kv__v js-pack">—</div>
-            </div>
-            <div class="kv kv--strong">
-              <div class="kv__k">Risk‑Adjusted Max Buy</div>
-              <div class="kv__v js-maxBuy">—</div>
-            </div>
-          </div>
-
-          <label class="field" style="margin-top:12px;">
-            <span class="field__label">Proposed ACV</span>
-            <input class="field__input js-acvInput" inputmode="decimal" placeholder="Enter your ACV offer (e.g., 52000)" />
-          </label>
-
-          <div class="result js-profitWrap" hidden>
-            <div class="result__row">
-              <div class="result__k">Profit Potential</div>
-              <div class="result__v js-profit">—</div>
-            </div>
-            <div class="result__row">
-              <div class="result__k">Status</div>
-              <div class="result__v js-statusPill"><span class="pill pill--neutral">—</span></div>
-            </div>
-          </div>
-
-          <div class="signals">
-            <div class="signal">
-              <div class="signal__k">Outcome Confidence</div>
-              <div class="signal__v js-signalConfidence">
-                  <span class="sr-only">—</span>
-                  <div class="gauge" data-gauge="js-signalConfidence">
-                    <div class="gauge__bar">
-                      <div class="gauge__marker" style="left:50%"></div>
-                    </div>
-                  </div>
-                </div>
-              <div class="signal__why js-signalConfidenceWhy"></div>
-            </div>
-            <div class="signal">
-              <div class="signal__k">Capital Friction</div>
-              <div class="signal__v js-signalFriction">
-                  <span class="sr-only">—</span>
-                  <div class="gauge" data-gauge="js-signalFriction">
-                    <div class="gauge__bar">
-                      <div class="gauge__marker" style="left:50%"></div>
-                    </div>
-                  </div>
-                </div>
-              <div class="signal__why js-signalFrictionWhy"></div>
-            </div>
-            <div class="signal">
-              <div class="signal__k">Trim Sensitivity</div>
-              <div class="signal__v js-signalElasticity">
-                  <span class="sr-only">—</span>
-                  <div class="gauge" data-gauge="js-signalElasticity">
-                    <div class="gauge__bar">
-                      <div class="gauge__marker" style="left:50%"></div>
-                    </div>
-                  </div>
-                </div>
-              <div class="signal__why js-signalElasticityWhy"></div>
-            </div>
-          </div>
-
-          <div class="dock__hint muted">
-            Tip: Appraisal Assist is designed to be used during the appraisal — not after.
-          </div>
-        </div>
-      </div>
-    
-      <div class="dock__panel dock__panel--insights" role="region" aria-label="Insights Panel">
-        <div class="dock__header">
-          <div class="dock__title">Insights</div>
-          <button class="dock__close js-dockClose" data-dock-close aria-label="Close">✕</button>
-        </div>
-        <div class="dock__body">
-          <div class="dock__hint muted">Top patterns you can’t see in standard reports.</div>
-          <div id="dockInsightsList"></div>
-        </div>
-      </div>
-
-</aside>
-
-    
-<script src="script.js"></script>
-  <script src="focus_patch.js"></script>
 </body>
 </html>
