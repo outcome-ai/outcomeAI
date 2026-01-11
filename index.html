@@ -59,23 +59,28 @@
     .brand{
       display:flex;
       align-items:center;
-      gap:10px;
-      padding: 8px 10px 18px;
+      gap:14px;
+      padding: 14px 12px 22px;
     }
+
     .brandMark{
-      width:34px;height:34px;border-radius:10px;
-      background:
-        linear-gradient(135deg, rgba(99,102,241,.95), rgba(59,130,246,.85));
-      box-shadow: 0 10px 22px rgba(99,102,241,.22);
-      position:relative;
+      width:68px;
+      height:68px;
+      flex: 0 0 68px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:18px;
+      background: transparent;
+      overflow:hidden;
     }
-    .brandMark:after{
-      content:"";
-      position:absolute; inset:8px;
-      border-radius:7px;
-      background: rgba(255,255,255,.35);
-      mix-blend-mode: screen;
+
+    .brandMark img{
+      height:68px;
+      width:auto;
+      display:block;
     }
+    
     .brandTitle{
       font-weight:800;
       letter-spacing:.02em;
@@ -879,7 +884,7 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="brand">
-        <div class="brandMark"></div>
+        <div class="brandMark"><img src="assets/img/outcome-ai-logo.png" alt="Outcome AI logo"></div>
         <div>
           <div class="brandTitle">Outcome AI</div>
           <div class="brandSub">Decision Intelligence</div>
